@@ -1,0 +1,1001 @@
+﻿ID,Ime_predmeta
+1,Arheologija
+2,Ekonomija
+3,Arheologija
+4,Matematika
+5,Ĺ port
+6,Sociologija
+7,SlovenĹˇÄŤina
+8,Antropologija
+9,Likovna umetnost
+10,Glasba
+11,Sociologija
+12,Etnologija
+13,Zgodovina
+14,Fizika
+15,SlovenĹˇÄŤina
+16,Fizika
+17,Glasba
+18,Arheologija
+19,Arheologija
+20,Etnologija
+21,Biologija
+22,Etnologija
+23,Likovna umetnost
+24,SlovenĹˇÄŤina
+25,Politologija
+26,Biologija
+27,Fizika
+28,Politologija
+29,Zgodovina
+30,Psihologija
+31,Matematika
+32,SlovenĹˇÄŤina
+33,SlovenĹˇÄŤina
+34,Matematika
+35,Arheologija
+36,Ekonomija
+37,Fizika
+38,Filozofija
+39,Ĺ port
+40,Politologija
+41,Likovna umetnost
+42,Psihologija
+43,RaÄŤunalniĹˇtvo
+44,Psihologija
+45,Kemija
+46,Geografija
+47,Ekonomija
+48,Ekonomija
+49,RaÄŤunalniĹˇtvo
+50,Matematika
+51,Antropologija
+52,Fizika
+53,Politologija
+54,Antropologija
+55,SlovenĹˇÄŤina
+56,Glasba
+57,Matematika
+58,Glasba
+59,Antropologija
+60,Politologija
+61,Ĺ port
+62,SlovenĹˇÄŤina
+63,Zgodovina
+64,Arheologija
+65,AngleĹˇÄŤina
+66,Ĺ port
+67,Ĺ port
+68,Fizika
+69,Psihologija
+70,Likovna umetnost
+71,Sociologija
+72,RaÄŤunalniĹˇtvo
+73,Antropologija
+74,Likovna umetnost
+75,Ekonomija
+76,Geografija
+77,Politologija
+78,Ĺ port
+79,Psihologija
+80,Glasba
+81,Glasba
+82,Filozofija
+83,Antropologija
+84,Ekonomija
+85,Etnologija
+86,Zgodovina
+87,SlovenĹˇÄŤina
+88,SlovenĹˇÄŤina
+89,Ekonomija
+90,AngleĹˇÄŤina
+91,Kemija
+92,Matematika
+93,Antropologija
+94,RaÄŤunalniĹˇtvo
+95,Filozofija
+96,Zgodovina
+97,Ĺ port
+98,Fizika
+99,Politologija
+100,Ĺ port
+101,Kemija
+102,AngleĹˇÄŤina
+103,AngleĹˇÄŤina
+104,Zgodovina
+105,Kemija
+106,Filozofija
+107,RaÄŤunalniĹˇtvo
+108,Sociologija
+109,Etnologija
+110,Glasba
+111,AngleĹˇÄŤina
+112,Glasba
+113,Antropologija
+114,Politologija
+115,Biologija
+116,Politologija
+117,Ekonomija
+118,Glasba
+119,Geografija
+120,AngleĹˇÄŤina
+121,Zgodovina
+122,Psihologija
+123,RaÄŤunalniĹˇtvo
+124,RaÄŤunalniĹˇtvo
+125,Politologija
+126,Psihologija
+127,SlovenĹˇÄŤina
+128,Psihologija
+129,Glasba
+130,Psihologija
+131,Biologija
+132,Ekonomija
+133,Arheologija
+134,Politologija
+135,Arheologija
+136,AngleĹˇÄŤina
+137,Ekonomija
+138,Biologija
+139,Politologija
+140,Sociologija
+141,Kemija
+142,Ĺ port
+143,Ĺ port
+144,RaÄŤunalniĹˇtvo
+145,Kemija
+146,Zgodovina
+147,Kemija
+148,Glasba
+149,Ekonomija
+150,Psihologija
+151,Sociologija
+152,Kemija
+153,SlovenĹˇÄŤina
+154,Filozofija
+155,AngleĹˇÄŤina
+156,Fizika
+157,AngleĹˇÄŤina
+158,Etnologija
+159,Zgodovina
+160,Kemija
+161,Biologija
+162,Fizika
+163,Likovna umetnost
+164,Antropologija
+165,Zgodovina
+166,Matematika
+167,Arheologija
+168,Biologija
+169,Fizika
+170,Geografija
+171,SlovenĹˇÄŤina
+172,Psihologija
+173,AngleĹˇÄŤina
+174,Ĺ port
+175,Kemija
+176,Geografija
+177,Ekonomija
+178,Ekonomija
+179,Zgodovina
+180,Geografija
+181,Matematika
+182,Likovna umetnost
+183,Fizika
+184,Fizika
+185,Zgodovina
+186,AngleĹˇÄŤina
+187,Biologija
+188,Fizika
+189,Kemija
+190,Matematika
+191,Ĺ port
+192,AngleĹˇÄŤina
+193,RaÄŤunalniĹˇtvo
+194,Politologija
+195,Fizika
+196,Glasba
+197,Ekonomija
+198,Ekonomija
+199,Ĺ port
+200,Matematika
+201,SlovenĹˇÄŤina
+202,Biologija
+203,Psihologija
+204,Ĺ port
+205,Sociologija
+206,Glasba
+207,Biologija
+208,Matematika
+209,Zgodovina
+210,Politologija
+211,Glasba
+212,Kemija
+213,Arheologija
+214,Arheologija
+215,Geografija
+216,Kemija
+217,Sociologija
+218,Etnologija
+219,Ĺ port
+220,Biologija
+221,Matematika
+222,Matematika
+223,Matematika
+224,Fizika
+225,Filozofija
+226,Etnologija
+227,Matematika
+228,Psihologija
+229,AngleĹˇÄŤina
+230,Biologija
+231,SlovenĹˇÄŤina
+232,Ĺ port
+233,Geografija
+234,Kemija
+235,Ekonomija
+236,AngleĹˇÄŤina
+237,Ekonomija
+238,Filozofija
+239,Glasba
+240,Likovna umetnost
+241,Biologija
+242,Ekonomija
+243,Sociologija
+244,RaÄŤunalniĹˇtvo
+245,AngleĹˇÄŤina
+246,Geografija
+247,AngleĹˇÄŤina
+248,Matematika
+249,Kemija
+250,Kemija
+251,Ekonomija
+252,Matematika
+253,Fizika
+254,RaÄŤunalniĹˇtvo
+255,Ekonomija
+256,SlovenĹˇÄŤina
+257,Matematika
+258,Ekonomija
+259,Matematika
+260,Geografija
+261,Politologija
+262,Ekonomija
+263,Politologija
+264,AngleĹˇÄŤina
+265,Psihologija
+266,Kemija
+267,Filozofija
+268,Etnologija
+269,Etnologija
+270,Fizika
+271,Etnologija
+272,Biologija
+273,Ekonomija
+274,Filozofija
+275,Ĺ port
+276,Sociologija
+277,Biologija
+278,Geografija
+279,Likovna umetnost
+280,Biologija
+281,Ĺ port
+282,Matematika
+283,SlovenĹˇÄŤina
+284,Sociologija
+285,Geografija
+286,AngleĹˇÄŤina
+287,Ĺ port
+288,Sociologija
+289,Glasba
+290,Antropologija
+291,Antropologija
+292,AngleĹˇÄŤina
+293,AngleĹˇÄŤina
+294,Geografija
+295,Glasba
+296,Sociologija
+297,Filozofija
+298,Ĺ port
+299,RaÄŤunalniĹˇtvo
+300,Ĺ port
+301,RaÄŤunalniĹˇtvo
+302,RaÄŤunalniĹˇtvo
+303,Zgodovina
+304,RaÄŤunalniĹˇtvo
+305,Fizika
+306,Ĺ port
+307,Antropologija
+308,Arheologija
+309,Geografija
+310,Politologija
+311,Ĺ port
+312,Politologija
+313,Zgodovina
+314,Politologija
+315,Kemija
+316,Arheologija
+317,AngleĹˇÄŤina
+318,Politologija
+319,Fizika
+320,Biologija
+321,Kemija
+322,Biologija
+323,Sociologija
+324,Etnologija
+325,Sociologija
+326,Psihologija
+327,Ĺ port
+328,Ekonomija
+329,Filozofija
+330,Geografija
+331,SlovenĹˇÄŤina
+332,Geografija
+333,Biologija
+334,Etnologija
+335,Antropologija
+336,Matematika
+337,Arheologija
+338,Psihologija
+339,Filozofija
+340,Sociologija
+341,Zgodovina
+342,Arheologija
+343,Biologija
+344,Geografija
+345,AngleĹˇÄŤina
+346,Ekonomija
+347,Geografija
+348,Fizika
+349,Matematika
+350,AngleĹˇÄŤina
+351,Ĺ port
+352,Kemija
+353,AngleĹˇÄŤina
+354,Fizika
+355,RaÄŤunalniĹˇtvo
+356,Geografija
+357,Filozofija
+358,Ĺ port
+359,Geografija
+360,RaÄŤunalniĹˇtvo
+361,Matematika
+362,SlovenĹˇÄŤina
+363,AngleĹˇÄŤina
+364,SlovenĹˇÄŤina
+365,Antropologija
+366,Matematika
+367,AngleĹˇÄŤina
+368,Psihologija
+369,Matematika
+370,Glasba
+371,Etnologija
+372,Sociologija
+373,SlovenĹˇÄŤina
+374,Sociologija
+375,Biologija
+376,Likovna umetnost
+377,Psihologija
+378,Matematika
+379,SlovenĹˇÄŤina
+380,Ekonomija
+381,Ĺ port
+382,Psihologija
+383,Politologija
+384,RaÄŤunalniĹˇtvo
+385,Etnologija
+386,Ekonomija
+387,Arheologija
+388,Matematika
+389,Geografija
+390,Politologija
+391,Biologija
+392,Zgodovina
+393,Matematika
+394,Etnologija
+395,SlovenĹˇÄŤina
+396,Glasba
+397,Ĺ port
+398,Likovna umetnost
+399,Ekonomija
+400,Antropologija
+401,Psihologija
+402,Matematika
+403,Antropologija
+404,Glasba
+405,AngleĹˇÄŤina
+406,Likovna umetnost
+407,Fizika
+408,Politologija
+409,Sociologija
+410,Biologija
+411,Psihologija
+412,Kemija
+413,Ĺ port
+414,Kemija
+415,AngleĹˇÄŤina
+416,Matematika
+417,AngleĹˇÄŤina
+418,Psihologija
+419,Biologija
+420,Sociologija
+421,Arheologija
+422,Psihologija
+423,Biologija
+424,Fizika
+425,Sociologija
+426,Geografija
+427,RaÄŤunalniĹˇtvo
+428,SlovenĹˇÄŤina
+429,Zgodovina
+430,SlovenĹˇÄŤina
+431,Etnologija
+432,Biologija
+433,Biologija
+434,Zgodovina
+435,Ĺ port
+436,Ĺ port
+437,Politologija
+438,Politologija
+439,Glasba
+440,Kemija
+441,Antropologija
+442,Glasba
+443,Ekonomija
+444,Sociologija
+445,RaÄŤunalniĹˇtvo
+446,Kemija
+447,Biologija
+448,Fizika
+449,Biologija
+450,Likovna umetnost
+451,Geografija
+452,Filozofija
+453,Politologija
+454,Kemija
+455,Geografija
+456,RaÄŤunalniĹˇtvo
+457,Kemija
+458,Glasba
+459,Sociologija
+460,Arheologija
+461,Zgodovina
+462,Etnologija
+463,Glasba
+464,Politologija
+465,Ekonomija
+466,SlovenĹˇÄŤina
+467,Psihologija
+468,Arheologija
+469,Kemija
+470,Filozofija
+471,Matematika
+472,Arheologija
+473,Fizika
+474,Psihologija
+475,AngleĹˇÄŤina
+476,Psihologija
+477,AngleĹˇÄŤina
+478,Likovna umetnost
+479,Sociologija
+480,Glasba
+481,Ekonomija
+482,Glasba
+483,SlovenĹˇÄŤina
+484,Filozofija
+485,RaÄŤunalniĹˇtvo
+486,Glasba
+487,SlovenĹˇÄŤina
+488,Matematika
+489,Ĺ port
+490,Ĺ port
+491,Kemija
+492,Psihologija
+493,Psihologija
+494,Politologija
+495,Geografija
+496,Kemija
+497,Antropologija
+498,Likovna umetnost
+499,Kemija
+500,Biologija
+501,SlovenĹˇÄŤina
+502,Likovna umetnost
+503,Sociologija
+504,Zgodovina
+505,Geografija
+506,Sociologija
+507,Glasba
+508,Filozofija
+509,Politologija
+510,Fizika
+511,Biologija
+512,Ekonomija
+513,Ĺ port
+514,Zgodovina
+515,Biologija
+516,Kemija
+517,Antropologija
+518,Etnologija
+519,Ĺ port
+520,Ĺ port
+521,Biologija
+522,Ĺ port
+523,Glasba
+524,Filozofija
+525,Biologija
+526,Ĺ port
+527,Fizika
+528,Arheologija
+529,SlovenĹˇÄŤina
+530,Glasba
+531,Likovna umetnost
+532,Glasba
+533,Filozofija
+534,Biologija
+535,Likovna umetnost
+536,Sociologija
+537,Matematika
+538,AngleĹˇÄŤina
+539,Zgodovina
+540,Ĺ port
+541,Matematika
+542,Fizika
+543,Sociologija
+544,Sociologija
+545,Politologija
+546,RaÄŤunalniĹˇtvo
+547,Geografija
+548,Sociologija
+549,Arheologija
+550,RaÄŤunalniĹˇtvo
+551,Psihologija
+552,Filozofija
+553,SlovenĹˇÄŤina
+554,Geografija
+555,Etnologija
+556,Biologija
+557,Politologija
+558,Likovna umetnost
+559,AngleĹˇÄŤina
+560,Arheologija
+561,AngleĹˇÄŤina
+562,Arheologija
+563,Etnologija
+564,Geografija
+565,Antropologija
+566,SlovenĹˇÄŤina
+567,RaÄŤunalniĹˇtvo
+568,Fizika
+569,Politologija
+570,Kemija
+571,RaÄŤunalniĹˇtvo
+572,Glasba
+573,Arheologija
+574,Geografija
+575,AngleĹˇÄŤina
+576,Zgodovina
+577,Fizika
+578,Politologija
+579,Matematika
+580,Kemija
+581,SlovenĹˇÄŤina
+582,Filozofija
+583,Ĺ port
+584,Antropologija
+585,Biologija
+586,Matematika
+587,Biologija
+588,Antropologija
+589,SlovenĹˇÄŤina
+590,Matematika
+591,Ĺ port
+592,Likovna umetnost
+593,Zgodovina
+594,Politologija
+595,Etnologija
+596,Geografija
+597,Biologija
+598,Psihologija
+599,Arheologija
+600,Filozofija
+601,Antropologija
+602,RaÄŤunalniĹˇtvo
+603,Biologija
+604,Glasba
+605,Sociologija
+606,Kemija
+607,Glasba
+608,Ekonomija
+609,Zgodovina
+610,Arheologija
+611,RaÄŤunalniĹˇtvo
+612,Ekonomija
+613,Ĺ port
+614,Glasba
+615,Sociologija
+616,Antropologija
+617,Likovna umetnost
+618,Biologija
+619,Geografija
+620,Glasba
+621,Geografija
+622,Sociologija
+623,Geografija
+624,Psihologija
+625,Geografija
+626,Politologija
+627,Matematika
+628,Ĺ port
+629,RaÄŤunalniĹˇtvo
+630,Geografija
+631,SlovenĹˇÄŤina
+632,Ĺ port
+633,Filozofija
+634,Sociologija
+635,Likovna umetnost
+636,Geografija
+637,Psihologija
+638,Ĺ port
+639,Arheologija
+640,Kemija
+641,Likovna umetnost
+642,Etnologija
+643,Biologija
+644,Zgodovina
+645,Politologija
+646,Antropologija
+647,Zgodovina
+648,Sociologija
+649,Biologija
+650,AngleĹˇÄŤina
+651,Matematika
+652,Kemija
+653,Zgodovina
+654,Glasba
+655,Biologija
+656,Ekonomija
+657,Likovna umetnost
+658,Fizika
+659,Etnologija
+660,Geografija
+661,Glasba
+662,Ekonomija
+663,Sociologija
+664,Glasba
+665,Fizika
+666,Sociologija
+667,Biologija
+668,Ĺ port
+669,Glasba
+670,AngleĹˇÄŤina
+671,Filozofija
+672,Sociologija
+673,Politologija
+674,Fizika
+675,AngleĹˇÄŤina
+676,AngleĹˇÄŤina
+677,SlovenĹˇÄŤina
+678,Sociologija
+679,Sociologija
+680,Ekonomija
+681,Antropologija
+682,Ĺ port
+683,Psihologija
+684,Geografija
+685,Ekonomija
+686,Geografija
+687,Likovna umetnost
+688,Biologija
+689,Ekonomija
+690,SlovenĹˇÄŤina
+691,Etnologija
+692,Sociologija
+693,Psihologija
+694,Ekonomija
+695,Ekonomija
+696,Glasba
+697,Filozofija
+698,Kemija
+699,Antropologija
+700,AngleĹˇÄŤina
+701,Fizika
+702,Ĺ port
+703,Arheologija
+704,SlovenĹˇÄŤina
+705,Ekonomija
+706,Glasba
+707,Ĺ port
+708,SlovenĹˇÄŤina
+709,Kemija
+710,Biologija
+711,Geografija
+712,Glasba
+713,Fizika
+714,Politologija
+715,SlovenĹˇÄŤina
+716,AngleĹˇÄŤina
+717,Matematika
+718,Ĺ port
+719,Geografija
+720,Politologija
+721,Biologija
+722,Sociologija
+723,Likovna umetnost
+724,RaÄŤunalniĹˇtvo
+725,Ĺ port
+726,Fizika
+727,Etnologija
+728,Antropologija
+729,Likovna umetnost
+730,Biologija
+731,SlovenĹˇÄŤina
+732,Psihologija
+733,SlovenĹˇÄŤina
+734,Ekonomija
+735,Fizika
+736,Likovna umetnost
+737,Ekonomija
+738,Ĺ port
+739,RaÄŤunalniĹˇtvo
+740,Geografija
+741,SlovenĹˇÄŤina
+742,RaÄŤunalniĹˇtvo
+743,Filozofija
+744,Sociologija
+745,Biologija
+746,Psihologija
+747,Glasba
+748,Psihologija
+749,Arheologija
+750,Ekonomija
+751,Glasba
+752,Arheologija
+753,Likovna umetnost
+754,Ĺ port
+755,Sociologija
+756,Matematika
+757,Geografija
+758,Likovna umetnost
+759,Ekonomija
+760,Geografija
+761,SlovenĹˇÄŤina
+762,Zgodovina
+763,Sociologija
+764,Politologija
+765,SlovenĹˇÄŤina
+766,RaÄŤunalniĹˇtvo
+767,Biologija
+768,Arheologija
+769,RaÄŤunalniĹˇtvo
+770,Likovna umetnost
+771,Geografija
+772,Sociologija
+773,Antropologija
+774,Likovna umetnost
+775,Sociologija
+776,Glasba
+777,Sociologija
+778,Geografija
+779,RaÄŤunalniĹˇtvo
+780,Ĺ port
+781,Ekonomija
+782,Psihologija
+783,Etnologija
+784,Matematika
+785,Geografija
+786,Glasba
+787,Ĺ port
+788,Politologija
+789,Sociologija
+790,Fizika
+791,Geografija
+792,Likovna umetnost
+793,Glasba
+794,Etnologija
+795,RaÄŤunalniĹˇtvo
+796,RaÄŤunalniĹˇtvo
+797,Geografija
+798,Politologija
+799,Ekonomija
+800,Matematika
+801,RaÄŤunalniĹˇtvo
+802,Matematika
+803,Zgodovina
+804,Likovna umetnost
+805,SlovenĹˇÄŤina
+806,Psihologija
+807,Fizika
+808,Filozofija
+809,Geografija
+810,RaÄŤunalniĹˇtvo
+811,Ekonomija
+812,AngleĹˇÄŤina
+813,Biologija
+814,Kemija
+815,Fizika
+816,SlovenĹˇÄŤina
+817,RaÄŤunalniĹˇtvo
+818,SlovenĹˇÄŤina
+819,Ekonomija
+820,Psihologija
+821,Filozofija
+822,Sociologija
+823,Biologija
+824,RaÄŤunalniĹˇtvo
+825,Biologija
+826,Ekonomija
+827,SlovenĹˇÄŤina
+828,Kemija
+829,Filozofija
+830,Ekonomija
+831,Filozofija
+832,Biologija
+833,AngleĹˇÄŤina
+834,SlovenĹˇÄŤina
+835,Ekonomija
+836,Filozofija
+837,AngleĹˇÄŤina
+838,Likovna umetnost
+839,Likovna umetnost
+840,Arheologija
+841,Arheologija
+842,Biologija
+843,RaÄŤunalniĹˇtvo
+844,Biologija
+845,Matematika
+846,Sociologija
+847,Antropologija
+848,Biologija
+849,Antropologija
+850,Politologija
+851,Likovna umetnost
+852,Etnologija
+853,Geografija
+854,Matematika
+855,Sociologija
+856,Likovna umetnost
+857,Politologija
+858,AngleĹˇÄŤina
+859,Ĺ port
+860,Kemija
+861,Politologija
+862,Psihologija
+863,Matematika
+864,Kemija
+865,AngleĹˇÄŤina
+866,Etnologija
+867,Politologija
+868,RaÄŤunalniĹˇtvo
+869,Antropologija
+870,Zgodovina
+871,Ĺ port
+872,Matematika
+873,Ekonomija
+874,Kemija
+875,Matematika
+876,RaÄŤunalniĹˇtvo
+877,Likovna umetnost
+878,Kemija
+879,SlovenĹˇÄŤina
+880,Etnologija
+881,Geografija
+882,Geografija
+883,Kemija
+884,Matematika
+885,Etnologija
+886,Ĺ port
+887,Ĺ port
+888,Fizika
+889,Matematika
+890,Arheologija
+891,Sociologija
+892,Likovna umetnost
+893,SlovenĹˇÄŤina
+894,Politologija
+895,RaÄŤunalniĹˇtvo
+896,Likovna umetnost
+897,Politologija
+898,Biologija
+899,Etnologija
+900,Antropologija
+901,Arheologija
+902,Likovna umetnost
+903,Geografija
+904,Zgodovina
+905,Zgodovina
+906,Arheologija
+907,Psihologija
+908,Fizika
+909,Sociologija
+910,Politologija
+911,Ĺ port
+912,Glasba
+913,Likovna umetnost
+914,Fizika
+915,Kemija
+916,SlovenĹˇÄŤina
+917,Sociologija
+918,Ekonomija
+919,Biologija
+920,Sociologija
+921,Zgodovina
+922,Matematika
+923,Antropologija
+924,AngleĹˇÄŤina
+925,Glasba
+926,Ekonomija
+927,SlovenĹˇÄŤina
+928,Ĺ port
+929,Politologija
+930,AngleĹˇÄŤina
+931,AngleĹˇÄŤina
+932,Matematika
+933,Matematika
+934,AngleĹˇÄŤina
+935,Kemija
+936,AngleĹˇÄŤina
+937,Biologija
+938,Matematika
+939,Filozofija
+940,RaÄŤunalniĹˇtvo
+941,Kemija
+942,AngleĹˇÄŤina
+943,Glasba
+944,Matematika
+945,SlovenĹˇÄŤina
+946,AngleĹˇÄŤina
+947,Psihologija
+948,SlovenĹˇÄŤina
+949,Glasba
+950,Glasba
+951,Geografija
+952,Geografija
+953,Glasba
+954,RaÄŤunalniĹˇtvo
+955,Sociologija
+956,Etnologija
+957,Biologija
+958,Ĺ port
+959,Matematika
+960,RaÄŤunalniĹˇtvo
+961,AngleĹˇÄŤina
+962,Sociologija
+963,Filozofija
+964,AngleĹˇÄŤina
+965,Etnologija
+966,Psihologija
+967,Etnologija
+968,Etnologija
+969,SlovenĹˇÄŤina
+970,Zgodovina
+971,Filozofija
+972,Ĺ port
+973,Filozofija
+974,RaÄŤunalniĹˇtvo
+975,Biologija
+976,Psihologija
+977,Kemija
+978,Matematika
+979,Matematika
+980,Zgodovina
+981,Antropologija
+982,Filozofija
+983,Filozofija
+984,Geografija
+985,Glasba
+986,Politologija
+987,Filozofija
+988,Biologija
+989,RaÄŤunalniĹˇtvo
+990,Sociologija
+991,Fizika
+992,Glasba
+993,Likovna umetnost
+994,Ĺ port
+995,Etnologija
+996,Arheologija
+997,Sociologija
+998,AngleĹˇÄŤina
+999,Filozofija
+1000,Arheologija
