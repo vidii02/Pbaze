@@ -1,24 +1,24 @@
-CREATE TABLE Ucitelji (
-    ID INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Ime VARCHAR(50) NOT NULL,
-    Priimek VARCHAR(50) NOT NULL,
-    Eposta VARCHAR(100) NOT NULL,
-    Cena DECIMAL(5, 2) NOT NULL
+CREATE TABLE ucitelji (
+    ID      INTEGER        PRIMARY KEY AUTOINCREMENT,
+    Ime     VARCHAR (50)   NOT NULL,
+    Priimek VARCHAR (50)   NOT NULL,
+    Eposta  VARCHAR (100)  NOT NULL,
+    Cena    DECIMAL (5, 2) NOT NULL
 );
 
-CREATE TABLE Ucenci (
-    ID INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Ime VARCHAR(50) NOT NULL,
-    Priimek VARCHAR(50) NOT NULL,
-    Eposta VARCHAR(100) NOT NULL
+CREATE TABLE ucenci (
+    ID      INTEGER       PRIMARY KEY AUTOINCREMENT,
+    Ime     VARCHAR (50)  NOT NULL,
+    Priimek VARCHAR (50)  NOT NULL,
+    Eposta  VARCHAR (100) NOT NULL
 );
 
-CREATE TABLE Predmeti (
-    ID INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Ime_predmeta VARCHAR(100) NOT NULL
+CREATE TABLE predmeti (
+    ID           INTEGER       PRIMARY KEY AUTOINCREMENT,
+    Ime_predmeta VARCHAR (100) NOT NULL
 );
 
-CREATE TABLE Instrukcije (
+CREATE TABLE instrukcije (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Datum DATE NOT NULL,
     Cas TIME NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE Instrukcije (
     FOREIGN KEY (ID_ucenca) REFERENCES Ucenci(ID)
 );
 
-CREATE TABLE UciteljiPredmeti (
+CREATE TABLE uciteljiPredmeti (
     ID_ucitelja INTEGER NOT NULL,
     ID_predmeta INTEGER NOT NULL,
     PRIMARY KEY (ID_ucitelja, ID_predmeta),
