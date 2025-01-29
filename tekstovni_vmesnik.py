@@ -7,24 +7,23 @@ def vnesi_izbiro(moznosti):
     """
     moznosti = list(moznosti)
     for i, moznost in enumerate(moznosti, 1):
-        print(f'{i}) {moznost}')
+        print(f"{i}) {moznost}")
     izbira = None
     while True:
         try:
-            izbira = int(input('> ')) - 1
+            izbira = int(input("> ")) - 1
             return moznosti[izbira]
         except (ValueError, IndexError):
             print("Napačna izbira!")
 
 def Izhod():
     """Pozdravi pred izhodom."""
-    print('Adijo!')
+    print("Adijo!")
 
 @prekinitev
 def vsi_ucitelji():
     """Izpiše vse učitelje."""
     result = Ucitelji.vsi_ucitelji()
-    # print("Test")
     for el in result:
         print(el)
 

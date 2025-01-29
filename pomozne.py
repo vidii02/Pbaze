@@ -8,7 +8,7 @@ class Meni(Enum):
         self.funkcija = funkcija
     
     def __str__(self):
-        return f"{self.ime} - {self.funkcija}"
+        return self.ime
     
 def prekinitev(funkcija):
     """Dekorator za obravnavo prekinitve s CTRL + C."""

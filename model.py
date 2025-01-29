@@ -12,21 +12,15 @@ if not os.path.exists("baza.db"):
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri ustvarjanju baze: {e}")
 
-try:
-    with sqlite3.connect("baza.db") as povezava:
-        povezava.execute("PRAGMA foreign_keys = ON")
-        baza.ustvari_bazo(povezava)
-except sqlite3.DatabaseError as e:
-    print(f"Napaka pri dostopu do baze: {e}")
-
 class Ucitelji:
     """Razred za učitelje"""
-    def __init__(self, id, ime, priimek, eposta, cena):
+    def __init__(self, id, ime, priimek, eposta, cena, id_uporabnika):
         self.id = id
         self.ime = ime
         self.priimek = priimek
         self.eposta = eposta
         self.cena = cena
+        self.id_uporabnika = id_uporabnika
     
     def __str__(self):
         return f"Učitelj {self.ime} {self.priimek}, ID: {self.id}, E-pošta: {self.eposta}, Cena: {self.cena} EUR"
@@ -40,19 +34,20 @@ class Ucitelji:
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, cena in povezava.execute(sql):
-                    results.append(Ucitelji(id, ime, priimek, eposta, cena))
+                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql):
+                    results.append(Ucitelji(id, ime, priimek, eposta, cena, id_uporabnika))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
 
 class Ucenci:
     """Razred za učence"""
-    def __init__(self, id, ime, priimek, eposta):
+    def __init__(self, id, ime, priimek, eposta, id_uporabnika):
         self.id = id
         self.ime = ime
         self.priimek = priimek
         self.eposta = eposta
+        self.id_uporabnika = id_uporabnika
     
     def __str__(self):
         return f"Učenec {self.ime} {self.priimek}, ID: {self.id}, E-pošta: {self.eposta}"
@@ -66,8 +61,34 @@ class Ucenci:
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta in povezava.execute(sql):
-                    results.append(Ucenci(id, ime, priimek, eposta))
+                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql):
+                    results.append(Ucenci(id, ime, priimek, eposta, id_uporabnika))
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return results
+
+class Uporabniki:
+    """Razred za uporabnike"""
+    def __init__(self, id, uporabnisko_ime, geslo, vrsta):
+        self.id = id
+        self.uporabnisko_ime = uporabnisko_ime
+        self.geslo = geslo
+        self.vrsta = vrsta
+    
+    def __str__(self):
+        return f"Uporabnik {self.uporabnisko_ime}, ID: {self.id}, Vrsta: {self.vrsta}"
+    
+    @staticmethod
+    def vsi_uporabniki():
+        """Vrne vse uporabnike"""
+        sql = """
+            SELECT * FROM uporabniki
+            """
+        results = []
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                for id, uporabnisko_ime, geslo, vrsta in povezava.execute(sql):
+                    results.append(Uporabniki(id, uporabnisko_ime, geslo, vrsta))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
@@ -127,8 +148,7 @@ class Instrukcije:
 
 class UciteljiPredmeti:
     """Razred za povezovanje učiteljev in predmetov"""
-    def __init__(self, id, id_ucitelja, id_predmeta):
-        self.id = id
+    def __init__(self, id_ucitelja, id_predmeta):
         self.id_ucitelja = id_ucitelja
         self.id_predmeta = id_predmeta
     
@@ -144,8 +164,8 @@ class UciteljiPredmeti:
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, id_ucitelja, id_predmeta in povezava.execute(sql):
-                    results.append(UciteljiPredmeti(id, id_ucitelja, id_predmeta))
+                for id_ucitelja, id_predmeta in povezava.execute(sql):
+                    results.append(UciteljiPredmeti(id_ucitelja, id_predmeta))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results

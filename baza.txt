@@ -1,16 +1,27 @@
 CREATE TABLE ucitelji (
-    ID      INTEGER        PRIMARY KEY AUTOINCREMENT,
-    Ime     VARCHAR (50)   NOT NULL,
-    Priimek VARCHAR (50)   NOT NULL,
-    Eposta  VARCHAR (100)  NOT NULL,
-    Cena    DECIMAL (5, 2) NOT NULL
+    ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
+    Ime               VARCHAR (50)   NOT NULL,
+    Priimek           VARCHAR (50)   NOT NULL,
+    Eposta            VARCHAR (100)  NOT NULL,
+    Cena              DECIMAL (5, 2) NOT NULL,
+    ID_uporabnika     INTEGER        NOT NULL,
+    FOREIGN KEY (ID_uporabnika) REFERENCES uporabniki(ID)
 );
 
 CREATE TABLE ucenci (
-    ID      INTEGER       PRIMARY KEY AUTOINCREMENT,
-    Ime     VARCHAR (50)  NOT NULL,
-    Priimek VARCHAR (50)  NOT NULL,
-    Eposta  VARCHAR (100) NOT NULL
+    ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
+    Ime               VARCHAR (50)   NOT NULL,
+    Priimek           VARCHAR (50)   NOT NULL,
+    Eposta            VARCHAR (100)  NOT NULL,
+    ID_uporabnika     INTEGER        NOT NULL,
+    FOREIGN KEY (ID_uporabnika) REFERENCES uporabniki(ID)
+);
+
+CREATE TABLE uporabniki (
+    ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
+    Uporabnisko_ime   VARCHAR (100)   NOT NULL UNIQUE,
+    Geslo             VARCHAR (100)  NOT NULL,
+    Vrsta             INTEGER        NOT NULL CHECK(Vrsta IN (0, 1, 2)) -- 0 za učence, 1 za učitelje, 2 za admin
 );
 
 CREATE TABLE predmeti (
