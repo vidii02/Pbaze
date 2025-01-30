@@ -27,16 +27,6 @@ class Tabela:
                 for vrstica in podatki:
                     cursor.execute(query, vrstica)
                 self.povezava.commit()
-                
-                
-                # for vrstica in podatki:
-                #     nov_slovar = dict()
-                #     for k, v in zip(stolpci, vrstica):
-                #         if v == "":
-                #             nov_slovar[k] = None
-                #         else:
-                #             nov_slovar[k] = v
-                #     self.dodaj_vrstico(nov_slovar)
         except (FileNotFoundError, csv.Error) as e:
             print(f"Napaka pri uvozu podatkov v tabelo {self.ime}: {e}")
         
@@ -69,9 +59,6 @@ class Tabela:
     def zapri_povezavo(self):
         if self.povezava:
             self.povezava.close()
-
-    def __del__(self):
-        self.zapri_povezavo()
 
 class Ucitelji(Tabela):
     ime = "ucitelji"
@@ -229,15 +216,16 @@ def ustvari_tabele(tabele):
             print(f"Napaka pri ustvarjanju tabele {tab.ime}: {e}")
 
 def izbrisi_tabele(tabele):
-    for tab in reversed(tabele):
+    for tab in tabele:
         try:
-            print(f"Brišem tabelo {tab.ime}")
+            print(f"Praznem tabelo {tab.ime}")
             tab.izprazni()
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri praznjenju tabele {tab.ime}: {e}")
     
-    for tab in reversed(tabele):
+    for tab in tabele:
         try:
+            print(f"Brišem tabelo {tab.ime}")
             tab.izbrisi()
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri brisanju tabele {tab.ime}: {e}")
@@ -258,31 +246,26 @@ def izprazni_tabele(tabele):
             print(f"Napaka pri praznjenju tabele {tab.ime}: {e}")
 
 def pripravi_tabele(povezava):
-    print("Pripravljam tabelo za učitelje")
     ucitelji = Ucitelji(povezava)
-    print("Pripravljam tabelo za učence")
     ucenci = Ucenci(povezava)
-    print("Pripravljam tabelo za uporabnike")
     uporabniki = Uporabniki(povezava)
-    print("Pripravljam tabelo za predmete")
     predmeti = Predmeti(povezava)
-    print("Pripravljam tabelo za inštrukcije")
     instrukcije = Instrukcije(povezava)
-    print("Pripravljam tabelo za povezavo med učitelji in predmeti")
     uciteljiPredmeti = UciteljiPredmeti(povezava)
-    return [ucitelji, ucenci, uporabniki, predmeti, instrukcije, uciteljiPredmeti]
+    return [uporabniki, ucitelji, ucenci, predmeti, instrukcije, uciteljiPredmeti]
 
 def ustvari_bazo(povezava):
     tabele = pripravi_tabele(povezava)
-    izbrisi_tabele(tabele)
+    tabele_brisanje = [tabele[i] for i in [5, 4, 1, 2, 3, 0]]
+    izbrisi_tabele(tabele_brisanje)
     ustvari_tabele(tabele)
     uvozi_podatke(tabele)
 
-def ustvari_bazo_ce_ne_obstaja(conn):
+def pripravi_bazo(povezava):
     try:
-        with conn:
-            cur = conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table';")
+        with povezava:
+            cur = povezava.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table';")
             if cur.fetchone()[0] == 0:
-                ustvari_bazo(conn)
+                ustvari_bazo(povezava)
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri preverjanju obstoja baze: {e}")

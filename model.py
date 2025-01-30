@@ -5,9 +5,9 @@ import os
 if not os.path.exists("baza.db"):
     try:
         with sqlite3.connect("baza.db") as povezava:
-            baza.ustvari_bazo_ce_ne_obstaja(povezava)
+            baza.pripravi_bazo(povezava)
             povezava.execute("PRAGMA foreign_keys = ON")
-            ucitelji, ucenci, predmeti, instrukcije, uciteljiPredmeti = baza.pripravi_tabele(povezava)
+            ucitelji, ucenci, uporabniki, predmeti, instrukcije, uciteljiPredmeti = baza.pripravi_tabele(povezava)
             povezava.commit()
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri ustvarjanju baze: {e}")
