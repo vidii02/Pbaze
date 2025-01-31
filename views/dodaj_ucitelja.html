@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Dodaj učitelja</title>
+  </head>
+  <body>
+    <h1>Dodaj učitelja</h1>
+    <form action="/dodaj_ucitelja" method="post">
+      <label for="ime">Ime:</label>
+      <input type="text" id="ime" name="ime"><br>
+      <label for="priimek">Priimek:</label>
+      <input type="text" id="priimek" name="priimek"><br>
+      <label for="eposta">E-pošta:</label>
+      <input type="email" id="eposta" name="eposta"><br>
+      <label for="cena">Cena na uro:</label>
+      <input type="number" id="cena" name="cena" step="0.01"><br>
+      <input type="submit" value="Dodaj">
+    </form>
+    <a href="/">Nazaj</a>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Vsi učenci</title>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title" class="text-center" style="margin-top: 70px;">
+                Vsi učenci
+            </h1>
+            %if ucenci:
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ime</th>
+                            <th>Priimek</th>
+                            <th>E-pošta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        %for ucenec in ucenci:
+                        <tr>
+                            <td>{{ ucenec.id }}</td>
+                            <td>{{ ucenec.ime }}</td>
+                            <td>{{ ucenec.priimek }}</td>
+                            <td>{{ ucenec.eposta }}</td>
+                        </tr>
+                        %end
+                    </tbody>
+                </table>
+            %else:
+                <p>Učitelj nima učencev.</p>
+            %end
+            <button onclick="history.back()">Nazaj</button>
+            <a href="/odjava"><button>Odjava</button></a>
+        </div>
+    </section>
+</body>
+</html>
