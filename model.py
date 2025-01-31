@@ -12,7 +12,7 @@ if not os.path.exists("baza.db"):
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri ustvarjanju baze: {e}")
 
-class Ucitelji:
+class Ucitelj:
     """Razred za učitelje"""
     def __init__(self, id, ime, priimek, eposta, cena, id_uporabnika):
         self.id = id
@@ -26,21 +26,41 @@ class Ucitelji:
         return f"Učitelj {self.ime} {self.priimek}, ID: {self.id}, E-pošta: {self.eposta}, Cena: {self.cena} EUR"
     
     @staticmethod
-    def vsi_ucitelji():
-        """Vrne vse učitelje"""
+    def pridobi_id_ucitelja(uporabnisko_ime):
+        """Vrne ID učitelja na podlagi uporaniškega imena"""
         sql = """
-            SELECT * FROM ucitelji
+            SELECT ucitelji.id FROM ucitelji
+            JOIN uporabniki ON ucitelji.id_uporabnika = uporabniki.id
+            WHERE uporabniki.uporabnisko_ime = ?
+            """
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
+                if id:
+                    return id[0]
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return id
+    
+    @staticmethod
+    def ucenci_ucitelja(id_ucitelja):
+        """Vrne vse učence, ki jih poučuje določen učitelj"""
+        sql = """
+            SELECT ucenci.id, ucenci.ime, ucenci.priimek, ucenci.eposta, ucenci.id_uporabnika
+            FROM ucenci
+            JOIN instrukcije ON ucenci.id = instrukcije.id_ucenca
+            WHERE instrukcije.id_ucitelja = ?
             """
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql):
-                    results.append(Ucitelji(id, ime, priimek, eposta, cena, id_uporabnika))
+                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, [id_ucitelja]):
+                    results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
 
-class Ucenci:
+class Ucenec:
     """Razred za učence"""
     def __init__(self, id, ime, priimek, eposta, id_uporabnika):
         self.id = id
@@ -51,6 +71,30 @@ class Ucenci:
     
     def __str__(self):
         return f"Učenec {self.ime} {self.priimek}, ID: {self.id}, E-pošta: {self.eposta}"
+
+class Admin:
+    """Razred za administratorje"""
+    def __init__(self, up_ime, geslo):
+        self.up_ime = up_ime
+        self.geslo = geslo
+    
+    def __str__(self):
+        return f"Admin: {self.up_ime}"
+    
+    @staticmethod
+    def vsi_ucitelji():
+        """Vrne vse učitelje"""
+        sql = """
+            SELECT * FROM ucitelji
+            """
+        results = []
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql):
+                    results.append(Ucitelj(id, ime, priimek, eposta, cena, id_uporabnika))
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return results
     
     @staticmethod
     def vsi_ucenci():
@@ -62,12 +106,12 @@ class Ucenci:
         try:
             with sqlite3.connect("baza.db") as povezava:
                 for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql):
-                    results.append(Ucenci(id, ime, priimek, eposta, id_uporabnika))
+                    results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
 
-class Uporabniki:
+class Uporabnik:
     """Razred za uporabnike"""
     def __init__(self, id, uporabnisko_ime, geslo, vrsta):
         self.id = id
@@ -88,12 +132,12 @@ class Uporabniki:
         try:
             with sqlite3.connect("baza.db") as povezava:
                 for id, uporabnisko_ime, geslo, vrsta in povezava.execute(sql):
-                    results.append(Uporabniki(id, uporabnisko_ime, geslo, vrsta))
+                    results.append(Uporabnik(id, uporabnisko_ime, geslo, vrsta))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
 
-class Predmeti:
+class Predmet:
     """Razred za predmete"""
     def __init__(self, id, ime_predmeta):
         self.id = id
@@ -112,7 +156,7 @@ class Predmeti:
         try:
             with sqlite3.connect("baza.db") as povezava:
                 for id, ime_predmeta in povezava.execute(sql):
-                    results.append(Predmeti(id, ime_predmeta))
+                    results.append(Predmet(id, ime_predmeta))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
@@ -146,7 +190,7 @@ class Instrukcije:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
 
-class UciteljiPredmeti:
+class UciteljPredmet:
     """Razred za povezovanje učiteljev in predmetov"""
     def __init__(self, id_ucitelja, id_predmeta):
         self.id_ucitelja = id_ucitelja
@@ -165,7 +209,20 @@ class UciteljiPredmeti:
         try:
             with sqlite3.connect("baza.db") as povezava:
                 for id_ucitelja, id_predmeta in povezava.execute(sql):
-                    results.append(UciteljiPredmeti(id_ucitelja, id_predmeta))
+                    results.append(UciteljPredmet(id_ucitelja, id_predmeta))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
+
+if __name__ == "__main__":
+    def ponastavi_bazo():
+        """Ponastavi bazo podatkov: izbriše obstoječe tabele, ustvari nove in uvozi podatke."""
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                baza.ustvari_bazo(povezava)
+                povezava.commit()
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri ponastavitvi baze: {e}")
+
+    # Ponastavi bazo ob zagonu
+    ponastavi_bazo()

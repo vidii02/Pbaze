@@ -23,7 +23,7 @@ def Izhod():
 @prekinitev
 def vsi_ucitelji():
     """Izpiše vse učitelje."""
-    result = Ucitelji.vsi_ucitelji()
+    result = Ucitelj.vsi_ucitelji()
     for el in result:
         print(el)
 
