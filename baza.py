@@ -167,7 +167,7 @@ class Instrukcije(Tabela):
                     Datum DATE NOT NULL,
                     Cas TIME NOT NULL,
                     Trajanje INTEGER NOT NULL, -- trajanje v minutah
-                    Status TEXT NOT NULL CHECK(Status IN ('rezervirano', 'opravljeno', 'preklicano')),
+                    Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
                     ID_ucitelja INTEGER NOT NULL,
                     ID_ucenca INTEGER NOT NULL,
                     FOREIGN KEY (ID_ucitelja) REFERENCES ucitelji(ID),

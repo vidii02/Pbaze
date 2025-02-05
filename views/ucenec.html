@@ -1,11 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Učenec</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Učenec Page</h1>
-    <p>Welcome, Učenec!</p>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
+        <a href="/odjava"><button>Odjava</button></a>
+    </header>
+    <section class="section">
+        <div class="container">
+            <h1 class="title" class="text-center" style="margin-top: 70px;">
+                Učenec
+            </h1>
+        </div>
+    </section>
 </body>
 </html>

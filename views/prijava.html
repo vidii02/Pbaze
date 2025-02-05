@@ -1,23 +1,20 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Prijava</title>
-  </head>
-  <body>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
     <div class="login-container">
-      <h1>Prijava</h1>
-      <form action="/prijava" method="post">
-        <label for="uporabnisko_ime">Uporabniško ime:</label>
-        <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" required>
-        <label for="geslo">Geslo:</label>
-        <input type="password" id="geslo" name="geslo" placeholder="geslo" required>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <form class="d-flex" action="/prijava" method="GET">
-            <button class="btn btn-outline-success">Prijava</button>
-          </form>
-      </div>
-      </form>
+        <h1>Prijava</h1>
+        <form action="/prijava" method="post">
+            <label for="uporabnisko_ime">Uporabniško ime:</label>
+            <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" required>
+            <label for="geslo">Geslo:</label>
+            <input type="password" id="geslo" name="geslo" placeholder="geslo" required>
+            <button type="submit" class="btn btn-outline-success">Prijava</button>
+        </form>
     </div>
-  </body>
+</body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Vsi učenci</title>
+    <title>Vsi učitelji</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -13,24 +13,24 @@
     <section class="section">
         <div class="container">
             <h1 class="title" class="text-center" style="margin-top: 70px;">
-                Vsi učenci
+                Vsi učitelji
             </h1>
             <div class="pagination-buttons">
                 <div>
                     %if page > 1:
-                        <a href="/admin/vsi_ucenci?page={{ page - 1 }}"><button data-hover="Prejšnjih 100">←</button></a>
+                        <a href="/admin/vsi_ucitelji?page={{ page - 1 }}"><button data-hover="Prejšnjih 100">←</button></a>
                     %else:
                         <button data-hover="Prejšnjih 100" disabled>←</button>
                     %end
                     %if next_page:
-                        <a href="/admin/vsi_ucenci?page={{ next_page }}"><button data-hover="Naslednjih 100">→</button></a>
+                        <a href="/admin/vsi_ucitelji?page={{ next_page }}"><button data-hover="Naslednjih 100">→</button></a>
                     %else:
                         <button data-hover="Naslednjih 100" disabled>→</button>
                     %end
                 </div>
                 <span class="pagination-description">Prikazano: {{ (page - 1) * limit + 1 }} - {{ page * limit }}</span>
             </div>
-            %if ucenci:
+            %if ucitelji:
                 <table class="table is-fullwidth">
                     <thead>
                         <tr>
@@ -41,12 +41,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        %for i, ucenec in enumerate(ucenci, start=(page - 1) * limit + 1):
+                        %for i, ucitelj in enumerate(ucitelji, start=(page - 1) * limit + 1):
                         <tr>
                             <td>{{ i }}</td>
-                            <td>{{ ucenec.ime }}</td>
-                            <td>{{ ucenec.priimek }}</td>
-                            <td>{{ ucenec.eposta }}</td>
+                            <td>{{ ucitelj.ime }}</td>
+                            <td>{{ ucitelj.priimek }}</td>
+                            <td>{{ ucitelj.eposta }}</td>
                         </tr>
                         %end
                     </tbody>
@@ -54,7 +54,7 @@
                     <span class="pagination-description">Prikazano: {{ (page - 1) * limit + 1 }} - {{ page * limit }}</span>
                 </div>
             %else:
-                <p>Ni učencev.</p>
+                <p>Ni učiteljev.</p>
             %end
         </div>
     </section>

@@ -12,6 +12,9 @@ if not os.path.exists("baza.db"):
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri ustvarjanju baze: {e}")
 
+povezava = sqlite3.connect("baza.db")
+povezava.execute("PRAGMA foreign_keys = ON")
+
 class Ucitelj:
     """Razred za učitelje"""
     def __init__(self, id, ime, priimek, eposta, cena, id_uporabnika):
@@ -33,32 +36,50 @@ class Ucitelj:
             JOIN uporabniki ON ucitelji.id_uporabnika = uporabniki.id
             WHERE uporabniki.uporabnisko_ime = ?
             """
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
-                if id:
-                    return id[0]
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
+        if id:
+            return id[0]
         return id
     
     @staticmethod
     def ucenci_ucitelja(id_ucitelja):
-        """Vrne vse učence, ki jih poučuje določen učitelj"""
+        """Vrne vse učence, ki jih poučuje določen učitelj, skupaj z datumom termina in statusom"""
         sql = """
-            SELECT ucenci.id, ucenci.ime, ucenci.priimek, ucenci.eposta, ucenci.id_uporabnika
+            SELECT ucenci.ime, ucenci.priimek, ucenci.eposta, 
+            CAST(CAST(strftime('%d', instrukcije.Datum) AS INTEGER) || '/' ||
+            CAST(strftime('%m', instrukcije.Datum) AS INTEGER) || '/' ||
+            strftime('%Y', instrukcije.Datum) AS TEXT) AS prikaz_datum,
+            instrukcije.Status
             FROM ucenci
-            JOIN instrukcije ON ucenci.id = instrukcije.id_ucenca
-            WHERE instrukcije.id_ucitelja = ?
+            JOIN instrukcije ON ucenci.ID = instrukcije.ID_ucenca
+            WHERE instrukcije.ID_ucitelja = ?
+            ORDER BY instrukcije.Datum;
             """
         results = []
+        for ime, priimek, eposta, datum, status in povezava.execute(sql, [id_ucitelja]):
+            results.append({
+                "ime": ime,
+                "priimek": priimek,
+                "eposta": eposta,
+                "datum": datum,
+                "status": status
+            })
+        return results
+    
+    @staticmethod
+    def ime_ucitelja(id_ucitelja):
+        """Vrne ime učitelja na podlagi njegovega ID-ja"""
+        sql = """
+            SELECT ime, priimek FROM ucitelji WHERE id = ?
+            """
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, [id_ucitelja]):
-                    results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
+                ime_priimek = povezava.execute(sql, [id_ucitelja]).fetchone()
+                if ime_priimek:
+                    return f"{ime_priimek[0]} {ime_priimek[1]}"
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
-        return results
+        return None
 
 class Ucenec:
     """Razred za učence"""
@@ -71,6 +92,38 @@ class Ucenec:
     
     def __str__(self):
         return f"Učenec {self.ime} {self.priimek}, ID: {self.id}, E-pošta: {self.eposta}"
+    
+    @staticmethod
+    def pridobi_id_ucenca(uporabnisko_ime):
+        """Vrne ID učenca na podlagi uporaniškega imena"""
+        sql = """
+            SELECT ucenci.id FROM ucenci
+            JOIN uporabniki ON ucenci.id_uporabnika = uporabniki.id
+            WHERE uporabniki.uporabnisko_ime = ?
+            """
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
+                if id:
+                    return id[0]
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return id
+    
+    @staticmethod
+    def ime_ucenca(id_ucenca):
+        """Vrne ime učenca na podlagi njegovega ID-ja"""
+        sql = """
+            SELECT ime, priimek FROM ucenci WHERE id = ?
+            """
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                ime_priimek = povezava.execute(sql, [id_ucenca]).fetchone()
+                if ime_priimek:
+                    return f"{ime_priimek[0]} {ime_priimek[1]}"
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return None
 
 class Admin:
     """Razred za administratorje"""
@@ -82,30 +135,34 @@ class Admin:
         return f"Admin: {self.up_ime}"
     
     @staticmethod
-    def vsi_ucitelji():
-        """Vrne vse učitelje"""
+    def vsi_ucitelji(limit, offset):
+        """Vrne vse učitelje z omejitvijo in zamikom"""
         sql = """
             SELECT * FROM ucitelji
+            ORDER BY priimek
+            LIMIT ? OFFSET ?
             """
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql):
+                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql, (limit, offset)):
                     results.append(Ucitelj(id, ime, priimek, eposta, cena, id_uporabnika))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
         return results
     
     @staticmethod
-    def vsi_ucenci():
-        """Vrne vse učence"""
+    def vsi_ucenci(limit, offset):
+        """Vrne vse učence z omejitvijo in zamikom"""
         sql = """
             SELECT * FROM ucenci
+            ORDER BY priimek
+            LIMIT ? OFFSET ?
             """
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql):
+                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, (limit, offset)):
                     results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
@@ -176,15 +233,30 @@ class Instrukcije:
         return f"Inštrukcije ID: {self.id}, Datum: {self.datum}, Čas: {self.cas}, Trajanje: {self.trajanje} minut, Status: {self.status}, Učitelj ID: {self.id_ucitelja}, Učenec ID: {self.id_ucenca}"
     
     @staticmethod
-    def vse_instrukcije():
-        """Vrne vse inštrukcije"""
+    def vse_instrukcije_ucitelja(id_ucitelja):
+        """Vrne vse inštrukcije za določenega učitelja"""
         sql = """
-            SELECT * FROM instrukcije
+            SELECT * FROM instrukcije WHERE id_ucitelja = ?
             """
         results = []
         try:
             with sqlite3.connect("baza.db") as povezava:
-                for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql):
+                for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucitelja]):
+                    results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
+        except sqlite3.DatabaseError as e:
+            print(f"Napaka pri dostopu do baze: {e}")
+        return results
+
+    @staticmethod
+    def vse_instrukcije_ucenca(id_ucenca):
+        """Vrne vse inštrukcije za določenega učenca"""
+        sql = """
+            SELECT * FROM instrukcije WHERE id_ucenca = ?
+            """
+        results = []
+        try:
+            with sqlite3.connect("baza.db") as povezava:
+                for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucenca]):
                     results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri dostopu do baze: {e}")
