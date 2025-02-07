@@ -1,22 +1,10 @@
 from bottle import *
-from model import Admin, Ucitelj, Ucenec, Predmet, Instrukcije, UciteljPredmet
+from model import *
 import secrets
-import sqlite3
 import os
 
 secret_key = secrets.token_hex(42)
 static_dir = os.path.join(os.path.dirname(__file__), 'static')
-
-def preveri_uporabnika(uporabnisko_ime, geslo):
-    # Preveri uporabniško ime in geslo v tabeli uporabniki
-    with sqlite3.connect("baza.db") as povezava:
-        cursor = povezava.cursor()
-        cursor.execute("SELECT Uporabnisko_ime, Geslo, Vrsta FROM uporabniki WHERE Uporabnisko_ime = ? AND Geslo = ?", (uporabnisko_ime, geslo))
-        uporabnik = cursor.fetchone()
-        if uporabnik:
-            vrsta = "učitelj" if uporabnik[2] == 1 else "učenec" if uporabnik[2] == 0 else "admin"
-            return {"uporabnisko_ime": uporabnik[0], "geslo": uporabnik[1], "vrsta": vrsta}
-        return None
 
 def preveri_piskotek():
     uporabnisko_ime_cookie = request.get_cookie("uporabnisko_ime", secret=secret_key)
@@ -92,7 +80,40 @@ def prijava_post():
 @get("/odjava")
 def odjava():
     izbrisi_piskotke()
+    napaka = request.query.napaka or None
     redirect("/prijava")
+
+@get("/registracija")
+def registracija():
+    return template("registracija.html")
+
+@post("/registracija")
+def registracija_post():
+    uporabnisko_ime = request.forms.get("uporabnisko_ime")
+    geslo = request.forms.get("geslo")
+    ponovi_geslo = request.forms.get("ponovi_geslo")
+    if geslo != ponovi_geslo:
+        return template("registracija.html")
+    return template("registracija_popup.html", uporabnisko_ime=uporabnisko_ime, geslo=geslo, napaka=None)
+
+@post("/registracija_popup")
+def registracija_popup_post():
+    uporabnisko_ime = request.forms.get("uporabnisko_ime")
+    geslo = request.forms.get("geslo")
+    vrsta = int(request.forms.get("vrsta"))
+    ime = request.forms.get("ime")
+    priimek = request.forms.get("priimek")
+    eposta = request.forms.get("eposta")
+    cena = request.forms.get("cena") if vrsta == 1 else None
+    registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, eposta, cena)
+    redirect("/prijava")
+    
+@get("/preveri_uporabnisko_ime")
+def preveri_uporabnisko_ime_v_bazi():
+    uporabnisko_ime = request.query.uporabnisko_ime
+    obstaja = preveri_uporabnisko_ime(uporabnisko_ime)
+    response.content_type = 'application/json'
+    return {"obstaja": obstaja}
 
 @get("/admin")
 def admin():
@@ -119,6 +140,40 @@ def vsi_ucenci():
     next_page = page + 1 if len(vsi_ucenci) == limit else None
     return template("vsi_ucenci.html", ucenci=vsi_ucenci, page=page, limit=limit, next_page=next_page, pridobi_domaca_stran=pridobi_domaca_stran)
 
+@get("/admin/uredi_uporabnike")
+def uredi_uporabnike():
+    preveri_dostop("admin")
+    uporabnisko_ime = request.query.uporabnisko_ime or ""
+    ime = request.query.ime or ""
+    priimek = request.query.priimek or ""
+    eposta = request.query.eposta or ""
+    vrsta = request.query.vrsta or ""
+    cena = request.query.cena or ""
+    cena_operator = request.query.cena_operator or "eq"
+    
+    uporabniki = Uporabnik.vsi_uporabniki(uporabnisko_ime, ime, priimek, eposta, vrsta, cena, cena_operator)
+    return template("uredi_uporabnike.html", uporabniki=uporabniki, pridobi_domaca_stran=pridobi_domaca_stran, request=request)
+
+@get("/admin/uredi_uporabnike/<uporabnisko_ime>")
+def uredi_uporabnika(uporabnisko_ime):
+    preveri_dostop("admin")
+    uporabnik = pridobi_uporabnika(uporabnisko_ime)
+    return template("uredi_uporabnika.html", uporabnik=uporabnik, pridobi_domaca_stran=pridobi_domaca_stran)
+
+@post("/admin/uredi_uporabnike/<uporabnisko_ime>")
+def uredi_uporabnika_post(uporabnisko_ime):
+    preveri_dostop("admin")
+    id_uporabnika = pridobi_id_uporabnika(uporabnisko_ime)
+    novo_uporabnisko_ime = request.forms.get("geslo")
+    novo_geslo = request.forms.get("geslo")
+    nova_vrsta = int(request.forms.get("vrsta"))
+    novo_ime = request.forms.get("ime")
+    novi_priimek = request.forms.get("priimek")
+    nova_eposta = request.forms.get("eposta")
+    nova_cena = request.forms.get("cena") if nova_vrsta == 1 else None
+    posodobi_uporabnika(id_uporabnika, novo_uporabnisko_ime, novo_geslo, nova_vrsta, novo_ime, novi_priimek, nova_eposta, nova_cena)
+    redirect("/admin/uredi_uporabnike")
+    
 @get("/ucitelji/<uporabnisko_ime>")
 def ucitelj(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)

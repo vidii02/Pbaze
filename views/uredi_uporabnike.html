@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Uredi uporabnike</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .filters {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .filters .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .filters .form-group label {
+            margin-bottom: 5px;
+        }
+        .filters .form-group input,
+        .filters .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .filters .form-group #filter-cena-operator {
+            max-width: 100px;
+        }
+        .filters button {
+            align-self: flex-start;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .filters button:hover {
+            background-color: #218838;
+        }
+        .table-container {
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
+        <a href="/odjava"><button>Odjava</button></a>
+    </header>
+    <div class="login-container">
+        <h1>Uredi uporabnike</h1>
+        <div class="filters">
+            <form method="get" action="/admin/uredi_uporabnike">
+                <div class="form-group">
+                    <label for="filter-uporabnisko-ime">Uporabniško ime:</label>
+                    <input type="text" id="filter-uporabnisko-ime" name="uporabnisko_ime" placeholder="Uporabniško ime" value="{{ request.query.uporabnisko_ime or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="filter-ime">Ime:</label>
+                    <input type="text" id="filter-ime" name="ime" placeholder="Ime" value="{{ request.query.ime or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="filter-priimek">Priimek:</label>
+                    <input type="text" id="filter-priimek" name="priimek" placeholder="Priimek" value="{{ request.query.priimek or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="filter-eposta">E-pošta:</label>
+                    <input type="email" id="filter-eposta" name="eposta" placeholder="E-pošta" value="{{ request.query.eposta or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="filter-vrsta">Vrsta:</label>
+                    <select id="filter-vrsta" name="vrsta">
+                        <option value="" {% if not request.query.vrsta %}selected{% endif %}>Vse</option>
+                        <option value="0" {% if request.query.vrsta == '0' %}selected{% endif %}>Učenec</option>
+                        <option value="1" {% if request.query.vrsta == '1' %}selected{% endif %}>Učitelj</option>
+                        <option value="2" {% if request.query.vrsta == '2' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-cena">Cena:</label>
+                    <select id="filter-cena-operator" name="cena_operator">
+                        <option value="eq" {% if request.query.cena_operator == 'eq' %}selected{% endif %}>=</option>
+                        <option value="gte" {% if request.query.cena_operator == 'gte' %}selected{% endif %}>>=</option>
+                        <option value="lte" {% if request.query.cena_operator == 'lte' %}selected{% endif %}><=</option>
+                    </select>
+                    <input type="number" id="filter-cena" name="cena" placeholder="Cena" step="0.01" value="{{ request.query.cena or '' }}">
+                </div>
+                <button type="submit" class="btn btn-outline-success">Filtriraj</button>
+            </form>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Uporabnika</th>
+                        <th>Uporabniško ime</th>
+                        <th>Ime</th>
+                        <th>Priimek</th>
+                        <th>E-pošta</th>
+                        <th>Vrsta</th>
+                        <th>Cena</th>
+                        <th>Dejanje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    % for uporabnik in uporabniki:
+                    <tr>
+                        <td>{{ uporabnik['id_uporabnika'] }}</td>
+                        <td>{{ uporabnik['uporabnisko_ime'] }}</td>
+                        <td>{{ uporabnik['ime'] }}</td>
+                        <td>{{ uporabnik['priimek'] }}</td>
+                        <td>{{ uporabnik['eposta'] }}</td>
+                        <td>{{ 'Učitelj' if uporabnik['vrsta'] == 1 else 'Učenec' if uporabnik['vrsta'] == 0 else 'Admin' }}</td>
+                        <td>{{ uporabnik['cena'] if uporabnik['vrsta'] == 1 else '' }}</td>
+                        <td><a href="/admin/uredi_uporabnike/{{ uporabnik['uporabnisko_ime'] }}">Uredi</a></td>
+                    </tr>
+                    % end
+                </tbody>
+            </table>
+        </div>
+        <p class="center-text"><a href="/admin">Nazaj na administracijo</a></p>
+    </div>
+</body>
+</html>

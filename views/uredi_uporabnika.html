@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Prijava</title>
+    <title>Uredi uporabnika</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
         .login-container {
@@ -25,7 +25,8 @@
         .login-container form label {
             margin-bottom: 5px;
         }
-        .login-container form input {
+        .login-container form input,
+        .login-container form select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -50,16 +51,26 @@
     </style>
 </head>
 <body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
+        <a href="/odjava"><button>Odjava</button></a>
+    </header>
     <div class="login-container">
-        <h1>Prijava</h1>
-        <form action="/prijava" method="post">
+        <h1>Uredi uporabnika</h1>
+        <form action="/admin/uredi_uporabnike/{{ uporabnik['uporabnisko_ime'] }}" method="post">
             <label for="uporabnisko_ime">Uporabniško ime:</label>
-            <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" required>
+            <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" value="{{ uporabnik['uporabnisko_ime'] }}" required>
             <label for="geslo">Geslo:</label>
-            <input type="password" id="geslo" name="geslo" placeholder="geslo" required>
-            <button type="submit" class="btn btn-outline-success">Prijava</button>
+            <input type="password" id="geslo" name="geslo" placeholder="geslo" value="{{ uporabnik['geslo'] }}" required>
+            <label for="ime">Ime:</label>
+            <input type="text" id="ime" name="ime" placeholder="ime" value="{{ uporabnik['ime'] }}" required>
+            <label for="priimek">Priimek:</label>
+            <input type="text" id="priimek" name="priimek" placeholder="priimek" value="{{ uporabnik['priimek'] }}" required>
+            <label for="eposta">E-pošta:</label>
+            <input type="email" id="eposta" name="eposta" placeholder="e-pošta" value="{{ uporabnik['eposta'] }}" required>
+            <button type="submit" class="btn btn-outline-success">Posodobi</button>
         </form>
-        <p class="center-text">Še nimate računa? <a href="/registracija">Registracija</a></p>
+        <p class="center-text"><a href="/admin/uredi_uporabnike">Nazaj na seznam uporabnikov</a></p>
     </div>
 </body>
 </html>

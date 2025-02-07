@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Registracija</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .login-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-container form label {
+            margin-bottom: 5px;
+        }
+        .login-container form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-container form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .login-container form button:hover {
+            background-color: #218838;
+        }
+        .center-text {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+    </style>
+    <script>
+        async function preveriUporabniskoIme(uporabniskoIme) {
+            const response = await fetch(`/preveri_uporabnisko_ime?uporabnisko_ime=${uporabniskoIme}`);
+            const data = await response.json();
+            return data.obstaja;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("uporabnisko_ime").addEventListener("blur", async function(event) {
+                var uporabniskoIme = document.getElementById("uporabnisko_ime").value;
+                var napaka = "";
+                if (await preveriUporabniskoIme(uporabniskoIme)) {
+                    napaka += "Uporabniško ime že obstaja. ";
+                }
+                this.setCustomValidity(napaka);
+            });
+
+            document.getElementById("geslo").addEventListener("blur", function() {
+                var geslo = document.getElementById("geslo").value;
+                var napaka = "";
+
+                if (geslo.length < 8) {
+                    napaka += "Geslo mora biti dolgo vsaj 8 znakov. ";
+                }
+                if (!/[A-Z]/.test(geslo)) {
+                    napaka += "Geslo mora vsebovati vsaj eno veliko črko. ";
+                }
+                if (!/[0-9]/.test(geslo)) {
+                    napaka += "Geslo mora vsebovati vsaj eno številko. ";
+                }
+                this.setCustomValidity(napaka);
+            });
+
+            document.getElementById("ponovi_geslo").addEventListener("blur", function() {
+                var geslo = document.getElementById("geslo").value;
+                var ponoviGeslo = document.getElementById("ponovi_geslo").value;
+                if (geslo !== ponoviGeslo) {
+                    document.getElementById("ponovi_geslo").setCustomValidity("Gesli se ne ujemata.");
+                } else {
+                    document.getElementById("ponovi_geslo").setCustomValidity("");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Registracija</h1>
+        <form id="registracija-form" action="/registracija" method="post">
+            <label for="uporabnisko_ime">Uporabniško ime:</label>
+            <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" required>
+            <label for="geslo">Geslo:</label>
+            <input type="password" id="geslo" name="geslo" placeholder="geslo" required>
+            <label for="ponovi_geslo">Ponovi geslo:</label>
+            <input type="password" id="ponovi_geslo" name="ponovi_geslo" placeholder="ponovi geslo" required>
+            <button type="submit" class="btn btn-outline-success">Naprej</button>
+        </form>
+        <p id="napaka" class="error-message"></p>
+        <p class="center-text">Že imate račun? <a href="/prijava">Prijavite se</a></p>
+    </div>
+</body>
+</html>

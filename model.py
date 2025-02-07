@@ -72,13 +72,9 @@ class Ucitelj:
         sql = """
             SELECT ime, priimek FROM ucitelji WHERE id = ?
             """
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                ime_priimek = povezava.execute(sql, [id_ucitelja]).fetchone()
-                if ime_priimek:
-                    return f"{ime_priimek[0]} {ime_priimek[1]}"
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        ime_priimek = povezava.execute(sql, [id_ucitelja]).fetchone()
+        if ime_priimek:
+            return f"{ime_priimek[0]} {ime_priimek[1]}"
         return None
 
 class Ucenec:
@@ -101,13 +97,9 @@ class Ucenec:
             JOIN uporabniki ON ucenci.id_uporabnika = uporabniki.id
             WHERE uporabniki.uporabnisko_ime = ?
             """
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
-                if id:
-                    return id[0]
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        id = povezava.execute(sql, [uporabnisko_ime]).fetchone()
+        if id:
+            return id[0]
         return id
     
     @staticmethod
@@ -116,13 +108,9 @@ class Ucenec:
         sql = """
             SELECT ime, priimek FROM ucenci WHERE id = ?
             """
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                ime_priimek = povezava.execute(sql, [id_ucenca]).fetchone()
-                if ime_priimek:
-                    return f"{ime_priimek[0]} {ime_priimek[1]}"
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        ime_priimek = povezava.execute(sql, [id_ucenca]).fetchone()
+        if ime_priimek:
+            return f"{ime_priimek[0]} {ime_priimek[1]}"
         return None
 
 class Admin:
@@ -143,12 +131,8 @@ class Admin:
             LIMIT ? OFFSET ?
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql, (limit, offset)):
-                    results.append(Ucitelj(id, ime, priimek, eposta, cena, id_uporabnika))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id, ime, priimek, eposta, cena, id_uporabnika in povezava.execute(sql, (limit, offset)):
+            results.append(Ucitelj(id, ime, priimek, eposta, cena, id_uporabnika))
         return results
     
     @staticmethod
@@ -160,12 +144,8 @@ class Admin:
             LIMIT ? OFFSET ?
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, (limit, offset)):
-                    results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, (limit, offset)):
+            results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
         return results
 
 class Uporabnik:
@@ -180,18 +160,54 @@ class Uporabnik:
         return f"Uporabnik {self.uporabnisko_ime}, ID: {self.id}, Vrsta: {self.vrsta}"
     
     @staticmethod
-    def vsi_uporabniki():
-        """Vrne vse uporabnike"""
+    def vsi_uporabniki(uporabnisko_ime="", ime="", priimek="", eposta="", vrsta="", cena="", cena_operator="eq"):
         sql = """
-            SELECT * FROM uporabniki
-            """
+            SELECT 
+                u.ID AS id_uporabnika,
+                u.Uporabnisko_ime,
+                COALESCE(uc.Ime, ut.Ime) AS Ime,
+                COALESCE(uc.Priimek, ut.Priimek) AS Priimek,
+                COALESCE(uc.Eposta, ut.Eposta) AS Eposta,
+                u.Vrsta,
+                COALESCE(ut.Cena, '') AS Cena,
+                'Uredi' AS Dejanje
+            FROM uporabniki u
+            LEFT JOIN ucenci uc ON u.ID = uc.ID_uporabnika
+            LEFT JOIN ucitelji ut ON u.ID = ut.ID_uporabnika
+            WHERE u.Uporabnisko_ime LIKE ?
+              AND COALESCE(uc.Ime, ut.Ime) LIKE ?
+              AND COALESCE(uc.Priimek, ut.Priimek) LIKE ?
+              AND COALESCE(uc.Eposta, ut.Eposta) LIKE ?
+              AND (u.Vrsta = ? OR ? = '')
+        """
+        params = [
+            f"{uporabnisko_ime}%", 
+            f"{ime}%", 
+            f"{priimek}%", 
+            f"{eposta}%", 
+            vrsta, vrsta
+        ]
+        if cena:
+            sql += " AND u.Vrsta = 1"
+            if cena_operator == "gte":
+                sql += " AND COALESCE(ut.Cena, 0) >= ?"
+            elif cena_operator == "lte":
+                sql += " AND COALESCE(ut.Cena, 0) <= ?"
+            else:
+                sql += " AND COALESCE(ut.Cena, 0) = ?"
+            params.append(float(cena))
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, uporabnisko_ime, geslo, vrsta in povezava.execute(sql):
-                    results.append(Uporabnik(id, uporabnisko_ime, geslo, vrsta))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id_uporabnika, uporabnisko_ime, ime, priimek, eposta, vrsta, cena, dejanje in povezava.execute(sql, params):
+            results.append({
+                "id_uporabnika": id_uporabnika,
+                "uporabnisko_ime": uporabnisko_ime,
+                "ime": ime,
+                "priimek": priimek,
+                "eposta": eposta,
+                "vrsta": vrsta,
+                "cena": cena,
+                "dejanje": dejanje
+            })
         return results
 
 class Predmet:
@@ -210,12 +226,8 @@ class Predmet:
             SELECT * FROM predmeti
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, ime_predmeta in povezava.execute(sql):
-                    results.append(Predmet(id, ime_predmeta))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id, ime_predmeta in povezava.execute(sql):
+            results.append(Predmet(id, ime_predmeta))
         return results
 
 class Instrukcije:
@@ -239,12 +251,8 @@ class Instrukcije:
             SELECT * FROM instrukcije WHERE id_ucitelja = ?
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucitelja]):
-                    results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucitelja]):
+            results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
         return results
 
     @staticmethod
@@ -254,12 +262,8 @@ class Instrukcije:
             SELECT * FROM instrukcije WHERE id_ucenca = ?
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucenca]):
-                    results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucenca]):
+            results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
         return results
 
 class UciteljPredmet:
@@ -278,14 +282,92 @@ class UciteljPredmet:
             SELECT * FROM uciteljiPredmeti
             """
         results = []
-        try:
-            with sqlite3.connect("baza.db") as povezava:
-                for id_ucitelja, id_predmeta in povezava.execute(sql):
-                    results.append(UciteljPredmet(id_ucitelja, id_predmeta))
-        except sqlite3.DatabaseError as e:
-            print(f"Napaka pri dostopu do baze: {e}")
+        for id_ucitelja, id_predmeta in povezava.execute(sql):
+            results.append(UciteljPredmet(id_ucitelja, id_predmeta))
         return results
 
+def preveri_uporabnika(uporabnisko_ime, geslo):
+    cursor = povezava.cursor()
+    cursor.execute("SELECT Uporabnisko_ime, Geslo, Vrsta FROM uporabniki WHERE Uporabnisko_ime = ? AND Geslo = ?", (uporabnisko_ime, geslo))
+    uporabnik = cursor.fetchone()
+    if uporabnik:
+        vrsta = "učitelj" if uporabnik[2] == 1 else "učenec" if uporabnik[2] == 0 else "admin"
+        return {"uporabnisko_ime": uporabnik[0], "geslo": uporabnik[1], "vrsta": vrsta}
+    return None
+
+def preveri_uporabnisko_ime(uporabnisko_ime):
+    cursor = povezava.cursor()
+    cursor.execute("SELECT Uporabnisko_ime FROM uporabniki WHERE Uporabnisko_ime = ?", (uporabnisko_ime,))
+    return cursor.fetchone() is not None
+
+def registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, eposta, cena=None):
+    cursor = povezava.cursor()
+    cursor.execute("INSERT INTO uporabniki (Uporabnisko_ime, Geslo, Vrsta) VALUES (?, ?, ?)",
+                    (uporabnisko_ime, geslo, vrsta))
+    uporabnik_id = cursor.lastrowid
+    if vrsta == 1:
+        cursor.execute("INSERT INTO ucitelji (Ime, Priimek, Eposta, Cena, ID_uporabnika) VALUES (?, ?, ?, ?, ?)",
+                        (ime, priimek, eposta, cena, uporabnik_id))
+    elif vrsta == 0:
+        cursor.execute("INSERT INTO ucenci (Ime, Priimek, Eposta, ID_uporabnika) VALUES (?, ?, ?, ?)",
+                        (ime, priimek, eposta, uporabnik_id))
+    povezava.commit()
+
+def pridobi_id_uporabnika(uporabnisko_ime):
+    cursor = povezava.cursor()
+    cursor.execute("SELECT ID FROM uporabniki WHERE Uporabnisko_ime = ?", (uporabnisko_ime,))
+    uporabnik = cursor.fetchone()
+    if uporabnik:
+        return uporabnik[0]
+    return None
+
+def pridobi_uporabnika(uporabnisko_ime):
+    cursor = povezava.cursor()
+    cursor.execute("""
+        SELECT 
+            u.ID, u.Uporabnisko_ime, 
+            u.Geslo, COALESCE(uc.Ime, ut.Ime) AS Ime, 
+            COALESCE(uc.Priimek, ut.Priimek) AS Priimek, 
+            COALESCE(uc.Eposta, ut.Eposta) AS Eposta
+        FROM uporabniki u
+        LEFT JOIN ucenci uc ON u.ID = uc.ID_uporabnika
+        LEFT JOIN ucitelji ut ON u.ID = ut.ID_uporabnika
+        WHERE u.Uporabnisko_ime = ?
+        """, (uporabnisko_ime,))
+    uporabnik = cursor.fetchone()
+    if uporabnik:
+        uporabnik_id, uporabnisko_ime, geslo, ime, priimek, eposta = uporabnik
+        return {
+            "id": uporabnik_id,
+            "uporabnisko_ime": uporabnisko_ime,
+            "geslo": geslo,
+            "ime": ime,
+            "priimek": priimek,
+            "eposta": eposta
+        }
+    return None
+
+def posodobi_uporabnika(id_uporabnika, novo_uporabnisko_ime, novo_geslo, nova_vrsta, novo_ime, novi_priimek, nova_eposta, nova_cena):
+    cursor = povezava.cursor()
+    cursor.execute("""
+        UPDATE uporabniki
+        SET Uporabnisko_ime = ?, Geslo = ?, Vrsta = ?
+        WHERE ID = ?
+    """, (novo_uporabnisko_ime, novo_geslo, nova_vrsta, id_uporabnika))
+    if nova_vrsta == 1:
+        cursor.execute("""
+            UPDATE ucitelji
+            SET Ime = ?, Priimek = ?, Eposta = ?, Cena = ?
+            WHERE ID_uporabnika = ?
+        """, (novo_ime, novi_priimek, nova_eposta, nova_cena, id_uporabnika))
+    else:
+        cursor.execute("""
+            UPDATE ucenci
+            SET Ime = ?, Priimek = ?, Eposta = ?
+            WHERE ID_uporabnika = ?
+        """, (novo_ime, novi_priimek, nova_eposta, id_uporabnika))
+    povezava.commit()
+    
 if __name__ == "__main__":
     def ponastavi_bazo():
         """Ponastavi bazo podatkov: izbriše obstoječe tabele, ustvari nove in uvozi podatke."""
