@@ -14,12 +14,12 @@ class Tabela:
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri brisanju tabele {self.ime}: {e}")
     
-    def uvozi(self, encoding="UTF-8"):
+    def uvozi(self, encoding="UTF-8", delimiter=";"):
         if self.pot_podatkov is None:
             return None
         try:
             with open(self.pot_podatkov, "r", encoding=encoding) as datoteka:
-                podatki = csv.reader(datoteka)
+                podatki = csv.reader(datoteka, delimiter=delimiter)
                 stolpci = next(podatki)
                 query = "insert into {0}({1}) values ({2})"
                 query = query.format(self.ime, ", ".join(stolpci), ", ".join("?" * len(stolpci)))
@@ -162,17 +162,21 @@ class Instrukcije(Tabela):
     def ustvari(self):
         try:
             self.povezava.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.ime} (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Datum DATE NOT NULL,
-                    Cas TIME NOT NULL,
-                    Trajanje INTEGER NOT NULL, -- trajanje v minutah
-                    Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
-                    ID_ucitelja INTEGER NOT NULL,
-                    ID_ucenca INTEGER NOT NULL,
-                    FOREIGN KEY (ID_ucitelja) REFERENCES ucitelji(ID),
-                    FOREIGN KEY (ID_ucenca) REFERENCES ucenci(ID)
-                );
+                    CREATE TABLE IF NOT EXISTS {self.ime} (
+                        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Datum DATE NOT NULL,
+                        Cas TIME NOT NULL,
+                        Trajanje INTEGER NOT NULL, -- trajanje v minutah
+                        Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
+                        ID_ucitelja INTEGER NOT NULL,
+                        ID_ucenca INTEGER NOT NULL,
+                        Mnenje TEXT,
+                        Ocena INTEGER DEFAULT NULL,
+                        ID_predmeta INTEGER,
+                        FOREIGN KEY (ID_ucitelja) REFERENCES ucitelji(ID),
+                        FOREIGN KEY (ID_ucenca) REFERENCES ucenci(ID),
+                        FOREIGN KEY (ID_predmeta) REFERENCES predmeti(ID)
+                    );
             """)
         except sqlite3.DatabaseError as e:
             print(f"Napaka pri ustvarjanju tabele {self.ime}: {e}")

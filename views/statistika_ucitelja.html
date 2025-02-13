@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Statistika učitelja</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 70px;
+        }
+        .statistika {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+        .statistika p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
+    </header>
+    <section class="section">
+        <div class="container">
+            <h1 class="title" style="margin-top: 70px;">
+                Statistika učitelja {{ime_ucitelja}}
+            </h1>
+            <div class="statistika">
+                <p>Število inštrukcij: {{statistika["stevilo_instrukcij"]}}</p>
+                <p>Število opravljenih inštrukcij: {{statistika["stevilo_opravljenih"]}}</p>
+                <p>Število rezerviranih inštrukcij: {{statistika["stevilo_rezerviranih"]}}</p>
+                <p>Število preklicanih inštrukcij: {{statistika["stevilo_preklicanih"]}}</p>
+                <p>Skupni zaslužek: {{ "%.2f" % statistika["zasluzek"] }} €</p>
+                <p>Povprečna ocena: {{ "%.1f" % statistika["povprecna_ocena"] }}</p>
+                <p>Število učencev: {{statistika["stevilo_ucencev"]}}</p>
+                <p>Število predmetov: {{statistika["stevilo_predmetov"]}}</p>
+                <p>Skupno število ur: {{"%.1f" % statistika["skupno_stevilo_ur"]}}</p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

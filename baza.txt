@@ -29,16 +29,20 @@ CREATE TABLE predmeti (
     Ime_predmeta VARCHAR (100) NOT NULL
 );
 
-CREATE TABLE instrukcije (
+CREATE TABLE IF NOT EXISTS {self.ime} (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Datum DATE NOT NULL,
     Cas TIME NOT NULL,
     Trajanje INTEGER NOT NULL, -- trajanje v minutah
-    Status TEXT NOT NULL CHECK(Status IN ('rezervirano', 'opravljeno', 'preklicano')),
+    Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
     ID_ucitelja INTEGER NOT NULL,
     ID_ucenca INTEGER NOT NULL,
-    FOREIGN KEY (ID_ucitelja) REFERENCES Ucitelji(ID),
-    FOREIGN KEY (ID_ucenca) REFERENCES Ucenci(ID)
+    Mnenje TEXT,
+    Ocena INTEGER DEFAULT NULL,
+    ID_predmeta INTEGER,
+    FOREIGN KEY (ID_ucitelja) REFERENCES ucitelji(ID),
+    FOREIGN KEY (ID_ucenca) REFERENCES ucenci(ID),
+    FOREIGN KEY (ID_predmeta) REFERENCES predmeti(ID)
 );
 
 CREATE TABLE uciteljiPredmeti (

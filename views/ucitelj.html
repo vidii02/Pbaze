@@ -4,18 +4,43 @@
     <meta charset="utf-8">
     <title>Učitelj</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 70px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .button-group a {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button-group a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
-        <a href="/odjava"><button>Odjava</button></a>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
-        <h1 class="title" class="text-center" style="margin-top: 70px;">
-            Pozdravljen/a {{ime_ucitelja}}
-        </h1>
         <div class="container">
-            <a href="/ucitelji/{{uporabnisko_ime}}/ucenci"><button>Vsi učenci</button></a>
+            <h1 class="title">Pozdravljen/a {{ime_ucitelja}}</h1>
+            <div class="button-group">
+                <a href="/ucitelji/{{uporabnisko_ime}}/ucenci">Vsi učenci</a>
+                <a href="/ucitelji/{{uporabnisko_ime}}/instrukcije">Vsi termini inštrukcij</a>
+                <a href="/ucitelji/{{uporabnisko_ime}}/statistika">Statistika</a>
+                <a href="/ucitelji/{{uporabnisko_ime}}/koledar">Koledar</a>
+            </div>
         </div>
     </section>
 </body>

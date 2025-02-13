@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
-    <title>Vsi učitelji</title>
+    <title>Vsi termini inštrukcij</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
         .container {
@@ -48,46 +48,68 @@
     </header>
     <section class="section">
         <div class="container">
-            <h1 class="title">Vsi učitelji</h1>
+            <h1 class="title" class="text-center" style="margin-top: 70px;">
+                Vsi termini inštrukcij
+            </h1>
             <div class="pagination-buttons">
                 %if page > 1:
-                    <a href="/admin/vsi_ucitelji?page={{ page - 1 }}"><button>← Prejšnjih 100</button></a>
+                    <a href="/ucitelji/{{ uporabnisko_ime }}/instrukcije?page={{ page - 1 }}"><button>← Prejšnjih 100</button></a>
                 %else:
                     <button disabled>← Prejšnjih 100</button>
                 %end
                 %if next_page:
-                    <a href="/admin/vsi_ucitelji?page={{ next_page }}"><button>Naslednjih 100 →</button></a>
+                    <a href="/ucitelji/{{ uporabnisko_ime }}/instrukcije?page={{ next_page }}"><button>Naslednjih 100 →</button></a>
                 %else:
                     <button disabled>Naslednjih 100 →</button>
                 %end
             </div>
-            %if ucitelji:
+            %if instrukcije:
                 <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Ime</th>
-                                <th>Priimek</th>
+                                <th>Ime učenca</th>
+                                <th>Priimek učenca</th>
                                 <th>E-pošta</th>
-                                <th>Cena (€)</th>
+                                <th>Predmet</th>
+                                <th>Datum</th>
+                                <th>Čas</th>
+                                <th>Trajanje</th>
+                                <th>Status</th>
+                                <th>Ocena</th>
+                                <th>Mnenje</th>
                             </tr>
                         </thead>
                         <tbody>
-                            %for i, ucitelj in enumerate(ucitelji, start=(page - 1) * limit + 1):
+                            %for i, instrukcija in enumerate(instrukcije, start=(page - 1) * limit + 1):
                             <tr>
                                 <td>{{ i }}</td>
-                                <td>{{ ucitelj.ime }}</td>
-                                <td>{{ ucitelj.priimek }}</td>
-                                <td>{{ ucitelj.eposta }}</td>
-                                <td>{{ ucitelj.cena }}</td>
+                                <td>{{ instrukcija.ime_ucenca }}</td>
+                                <td>{{ instrukcija.priimek_ucenca }}</td>
+                                <td>{{ instrukcija.eposta_ucenca }}</td>
+                                <td>{{ instrukcija.ime_predmeta }}</td>
+                                <td>{{ instrukcija.datum }}</td>
+                                <td>{{ instrukcija.cas }}</td>
+                                <td>
+                                    %if instrukcija.trajanje < 60:
+                                        {{ instrukcija.trajanje }} min
+                                    %elif instrukcija.trajanje % 60 == 0:
+                                        {{ instrukcija.trajanje // 60 }}h
+                                    %else:
+                                        {{ instrukcija.trajanje // 60 }}h {{ instrukcija.trajanje % 60 }}min
+                                    %end
+                                </td>
+                                <td>{{ instrukcija.status }}</td>
+                                <td>{{ instrukcija.ocena if instrukcija.ocena != "None" else "/" }}</td>
+                                <td>{{ instrukcija.mnenje }}</td>
                             </tr>
                             %end
                         </tbody>
                     </table>
                 </div>
             %else:
-                <p>Ni učiteljev.</p>
+                <p>Ni inštrukcij.</p>
             %end
         </div>
     </section>

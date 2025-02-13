@@ -2,46 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Vsi učenci</title>
+    <title>Učiteljevi učenci</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 70px;
+        }
+        .pagination-buttons {
+            margin-top: 20px;
+        }
+        .pagination-buttons button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .pagination-buttons button[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
-        <a href="/odjava"><button>Odjava</button></a>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
             <h1 class="title" class="text-center" style="margin-top: 70px;">
-                Vsi učenci
+                Učiteljevi učenci
             </h1>
+            <div class="pagination-buttons">
+                %if page > 1:
+                    <a href="/ucitelji/{{ uporabnisko_ime }}/ucenci?page={{ page - 1 }}"><button>← Prejšnjih 100</button></a>
+                %else:
+                    <button disabled>← Prejšnjih 100</button>
+                %end
+                %if next_page:
+                    <a href="/ucitelji/{{ uporabnisko_ime }}/ucenci?page={{ next_page }}"><button>Naslednjih 100 →</button></a>
+                %else:
+                    <button disabled>Naslednjih 100 →</button>
+                %end
+            </div>
             %if ucenci:
-                <table class="table is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th>Ime</th>
-                            <th>Priimek</th>
-                            <th>E-pošta</th>
-                            <th>Termin</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        %for ucenec in ucenci:
-                        <tr>
-                            <td>{{ ucenec['ime'] }}</td>
-                            <td>{{ ucenec['priimek'] }}</td>
-                            <td>{{ ucenec['eposta'] }}</td>
-                            <td>{{ ucenec['datum'] }}</td>
-                            <td>{{ ucenec['status'] }}</td>
-                        </tr>
-                        %end
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ime</th>
+                                <th>Priimek</th>
+                                <th>E-pošta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            %for i, ucenec in enumerate(ucenci, start=(page - 1) * limit + 1):
+                            <tr>
+                                <td>{{ i }}</td>
+                                <td>{{ ucenec.ime }}</td>
+                                <td>{{ ucenec.priimek }}</td>
+                                <td>{{ ucenec.eposta }}</td>
+                            </tr>
+                            %end
+                        </tbody>
+                    </table>
+                </div>
             %else:
-                <p>Učitelj nima učencev.</p>
+                <p>Ni učencev.</p>
             %end
-            <button onclick="history.back()">Nazaj</button>
         </div>
     </section>
 </body>

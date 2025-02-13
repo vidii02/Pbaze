@@ -5,6 +5,10 @@
     <title>Uredi uporabnika</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
+        .container {
+            text-align: center;
+            margin-top: 70px;
+        }
         .login-container {
             width: 100%;
             max-width: 600px;
@@ -24,6 +28,7 @@
         }
         .login-container form label {
             margin-bottom: 5px;
+            text-align: left;
         }
         .login-container form input,
         .login-container form select {
@@ -48,29 +53,54 @@
             text-align: center;
             margin-top: 20px;
         }
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("uporabnisko_ime").addEventListener("focusout", function() {
+                const uporabniskoIme = document.getElementById("uporabnisko_ime").value;
+                const errorMessage = document.getElementById("error-message");
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+                if (!regex.test(uporabniskoIme)) {
+                    document.getElementById("uporabnisko_ime").setCustomValidity("Uporabniško ime mora biti dolgo vsaj 8 znakov, vsebovati mora vsaj eno malo črko, vsaj eno veliko črko in vsaj eno številko.");
+                } else {
+                    errorMessage.textContent = "";
+                    document.getElementById("uporabnisko_ime").setCustomValidity("");
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <header>
-        <a href="{{ pridobi_domaca_stran() }}"><button>Domov</button></a>
-        <a href="/odjava"><button>Odjava</button></a>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
-    <div class="login-container">
-        <h1>Uredi uporabnika</h1>
-        <form action="/admin/uredi_uporabnike/{{ uporabnik['uporabnisko_ime'] }}" method="post">
-            <label for="uporabnisko_ime">Uporabniško ime:</label>
-            <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" value="{{ uporabnik['uporabnisko_ime'] }}" required>
-            <label for="geslo">Geslo:</label>
-            <input type="password" id="geslo" name="geslo" placeholder="geslo" value="{{ uporabnik['geslo'] }}" required>
-            <label for="ime">Ime:</label>
-            <input type="text" id="ime" name="ime" placeholder="ime" value="{{ uporabnik['ime'] }}" required>
-            <label for="priimek">Priimek:</label>
-            <input type="text" id="priimek" name="priimek" placeholder="priimek" value="{{ uporabnik['priimek'] }}" required>
-            <label for="eposta">E-pošta:</label>
-            <input type="email" id="eposta" name="eposta" placeholder="e-pošta" value="{{ uporabnik['eposta'] }}" required>
-            <button type="submit" class="btn btn-outline-success">Posodobi</button>
-        </form>
-        <p class="center-text"><a href="/admin/uredi_uporabnike">Nazaj na seznam uporabnikov</a></p>
-    </div>
+    <section class="section">
+        <div class="container">
+            <div class="login-container">
+                <h1>Uredi uporabnika</h1>
+                <form action="/admin/uredi_uporabnike/{{ uporabnik["uporabnisko_ime"] }}" method="post" onsubmit="return validateForm()">
+                    <div id="error-message" class="error-message"></div>
+                    <label for="uporabnisko_ime">Uporabniško ime:</label>
+                    <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" value="{{ uporabnik["uporabnisko_ime"] }}" required>
+                    <label for="geslo">Geslo:</label>
+                    <input type="password" id="geslo" name="geslo" placeholder="geslo" value="{{ uporabnik["geslo"] }}" required>
+                    <label for="ime">Ime:</label>
+                    <input type="text" id="ime" name="ime" placeholder="ime" value="{{ uporabnik["ime"] }}" required>
+                    <label for="priimek">Priimek:</label>
+                    <input type="text" id="priimek" name="priimek" placeholder="priimek" value="{{ uporabnik["priimek"] }}" required>
+                    <label for="eposta">E-pošta:</label>
+                    <input type="email" id="eposta" name="eposta" placeholder="e-pošta" value="{{ uporabnik["eposta"] }}" required>
+                    <button type="submit" class="btn btn-outline-success">Posodobi</button>
+                </form>
+                <p class="center-text"><a href="/admin/uredi_uporabnike">Nazaj na seznam uporabnikov</a></p>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

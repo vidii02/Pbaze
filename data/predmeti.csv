@@ -1,41 +1,41 @@
-﻿ID,Ime_predmeta
-1,Slovenščina
-2,Angleščina
-3,Matematika
-4,Glasba
-5,Zgodovina
-6,Geografija
-7,Fizika
-8,Kemija
-9,Biologija
-10,Športna vzgoja
-11,Računalništvo
-12,Filozofija
-13,Psihologija
-14,Sociologija
-15,Umetnost
-16,Ekonomija
-17,Pravo
-18,Tehnika
-19,Latinski jezik
-20,Španščina
-21,Francoščina
-22,Nemščina
-23,Italijanščina
-24,Kitajščina
-25,Ruski jezik
-26,Japonski jezik
-27,Programiranje
-28,Robotika
-29,Elektrotehnika
-30,Strojništvo
-31,Medicina
-32,Arhitektura
-33,Astronomija
-34,Ekologija
-35,Antropologija
-36,Arheologija
-37,Genetika
-38,Mikrobiologija
-39,Astrofizika
-40,Nanotehnologija
+ID;Ime_predmeta
+1;Slovenščina
+2;Angleščina
+3;Matematika
+4;Glasba
+5;Zgodovina
+6;Geografija
+7;Fizika
+8;Kemija
+9;Biologija
+10;Športna vzgoja
+11;Računalništvo
+12;Filozofija
+13;Psihologija
+14;Sociologija
+15;Umetnost
+16;Ekonomija
+17;Pravo
+18;Tehnika
+19;Latinski jezik
+20;Španščina
+21;Francoščina
+22;Nemščina
+23;Italijanščina
+24;Kitajščina
+25;Ruski jezik
+26;Japonski jezik
+27;Programiranje
+28;Robotika
+29;Elektrotehnika
+30;Strojništvo
+31;Medicina
+32;Arhitektura
+33;Astronomija
+34;Ekologija
+35;Antropologija
+36;Arheologija
+37;Genetika
+38;Mikrobiologija
+39;Astrofizika
+40;Nanotehnologija

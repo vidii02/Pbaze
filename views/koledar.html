@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Koledar</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .filters {
+            margin-bottom: 20px;
+        }
+        .instruction {
+            background-color: #f0f0f0;
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1>Koledar</h1>
+            <div class="filters">
+                <form method="GET" action="/koledar">
+                    <label for="vrsta">Vrsta:</label>
+                    <select name="vrsta" id="vrsta">
+                        <option value="vse">Vse</option>
+                        <option value="prijavljene">Prijavljene</option>
+                        <option value="neprijavljene">Neprijavljene</option>
+                    </select>
+                    <label for="datum">Datum:</label>
+                    <input type="date" name="datum" id="datum">
+                    <label for="ucitelj">Učitelj:</label>
+                    <input type="text" name="ucitelj" id="ucitelj">
+                    <button type="submit">Išči</button>
+                </form>
+            </div>
+            <div class="instructions">
+                %for instrukcija in instrukcije:
+                    <div class="instruction">
+                        <div>{{ instrukcija.cas }} - {{ instrukcija.ime_predmeta }}</div>
+                        <div>{{ instrukcija.ime_ucenca }} {{ instrukcija.priimek_ucenca }}</div>
+                        <div>{{ instrukcija.datum }}</div>
+                        <div>{{ instrukcija.ucitelj }}</div>
+                        %if vrsta == "učitelj":
+                            <a href="/rezervacija/{{ instrukcija.id }}">Rezerviraj</a>
+                        %end
+                    </div>
+                %end
+            </div>
+        </div>
+    </section>
+</body>
+</html>

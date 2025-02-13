@@ -2,6 +2,7 @@ from bottle import *
 from model import *
 import secrets
 import os
+from datetime import datetime, timedelta
 
 secret_key = secrets.token_hex(42)
 static_dir = os.path.join(os.path.dirname(__file__), 'static')
@@ -143,16 +144,20 @@ def vsi_ucenci():
 @get("/admin/uredi_uporabnike")
 def uredi_uporabnike():
     preveri_dostop("admin")
-    uporabnisko_ime = request.query.uporabnisko_ime or ""
-    ime = request.query.ime or ""
-    priimek = request.query.priimek or ""
-    eposta = request.query.eposta or ""
-    vrsta = request.query.vrsta or ""
-    cena = request.query.cena or ""
-    cena_operator = request.query.cena_operator or "eq"
+    uporabnisko_ime = request.query.uporabnisko_ime
+    ime = request.query.ime
+    priimek = request.query.priimek
+    eposta = request.query.eposta
+    vrsta = request.query.vrsta
+    cena = request.query.cena
+    cena_operator = request.query.cena_operator
+    page = int(request.query.page or 1)
     
-    uporabniki = Uporabnik.vsi_uporabniki(uporabnisko_ime, ime, priimek, eposta, vrsta, cena, cena_operator)
-    return template("uredi_uporabnike.html", uporabniki=uporabniki, pridobi_domaca_stran=pridobi_domaca_stran, request=request)
+    uporabniki = Uporabnik.vsi_uporabniki(uporabnisko_ime, ime, priimek, eposta, vrsta, cena, cena_operator, page, 100)
+    next_page = page + 1 if len(uporabniki) == 100 else None
+    print(f"DEBUG - Filtri: {uporabnisko_ime=}, {ime=}, {priimek=}, {eposta=}, {vrsta=}, {cena=}, {cena_operator=}, {page=}")
+    return template("uredi_uporabnike.html", uporabniki=uporabniki, pridobi_domaca_stran=pridobi_domaca_stran, request=request, page=page, next_page=next_page)
+
 
 @get("/admin/uredi_uporabnike/<uporabnisko_ime>")
 def uredi_uporabnika(uporabnisko_ime):
@@ -177,25 +182,58 @@ def uredi_uporabnika_post(uporabnisko_ime):
 @get("/ucitelji/<uporabnisko_ime>")
 def ucitelj(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)
-    ime_ucitelja = Ucitelj.ime_ucitelja(Ucitelj.pridobi_id_ucitelja(uporabnisko_ime))
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    ime_ucitelja = Ucitelj.ime_ucitelja(id_ucitelja)
     return template("ucitelj.html", uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, pridobi_domaca_stran=pridobi_domaca_stran)
 
 @get("/ucitelji/<uporabnisko_ime>/ucenci")
 def vsi_ucenci(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)
-    ucenci = Ucitelj.ucenci_ucitelja(Ucitelj.pridobi_id_ucitelja(uporabnisko_ime))
-    return template("ucenci.html", ucenci=ucenci, uporabnisko_ime=uporabnisko_ime, pridobi_domaca_stran=pridobi_domaca_stran)
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    ime_ucitelja = Ucitelj.ime_ucitelja(id_ucitelja)
+    page = int(request.query.page or 1)
+    limit = 100
+    offset = (page - 1) * limit
+    ucenci = Ucitelj.ucenci_ucitelja(id_ucitelja, limit=limit, offset=offset)
+    next_page = page + 1 if len(ucenci) == limit else None
+    return template("ucenci.html", ucenci=ucenci, uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, pridobi_domaca_stran=pridobi_domaca_stran, page=page, limit=limit, next_page=next_page)
+
+@get("/ucitelji/<uporabnisko_ime>/instrukcije")
+def vsi_instrukcije(uporabnisko_ime):
+    preveri_dostop("učitelj", uporabnisko_ime)
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    ime_ucitelja = Ucitelj.ime_ucitelja(id_ucitelja)
+    page = int(request.query.page or 1)
+    limit = 100
+    offset = (page - 1) * limit
+    instrukcije = Instrukcije.vse_instrukcije_ucitelja(id_ucitelja, limit=limit, offset=offset)
+    next_page = page + 1 if len(instrukcije) == limit else None
+    return template("instrukcije.html", instrukcije=instrukcije, uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, pridobi_domaca_stran=pridobi_domaca_stran, page=page, limit=limit, next_page=next_page)
+
+@get("/ucitelji/<uporabnisko_ime>/statistika")
+def statistika_ucitelja(uporabnisko_ime):
+    preveri_dostop("učitelj", uporabnisko_ime)
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    ime_ucitelja = Ucitelj.ime_ucitelja(id_ucitelja)
+    statistika = Ucitelj.pridobi_statistiko(id_ucitelja)
+    return template("statistika_ucitelja.html", uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, statistika=statistika, pridobi_domaca_stran=pridobi_domaca_stran)
 
 @get("/ucitelji/<uporabnisko_ime>/koledar")
 def koledar_ucitelj(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)
-    instrukcije = Instrukcije.vse_instrukcije_ucitelja(Ucitelj.pridobi_id_ucitelja(uporabnisko_ime))
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    vrsta = request.query.vrsta or "vse"
+    datum = request.query.datum or None
+    ucitelj = request.query.ucitelj or None
+
+    instrukcije = Instrukcije.filtrirane_instrukcije(id_ucitelja, vrsta, datum, ucitelj)
     return template("koledar.html", instrukcije=instrukcije, uporabnisko_ime=uporabnisko_ime, vrsta="učitelj", pridobi_domaca_stran=pridobi_domaca_stran)
 
 @get("/ucenci/<uporabnisko_ime>")
 def ucenec(uporabnisko_ime):
     preveri_dostop("učenec", uporabnisko_ime)
-    ime_ucenca = Ucenec.ime_ucenca(Ucenec.pridobi_id_ucenca(uporabnisko_ime))
+    id_ucenca = Ucenec.pridobi_id_ucenca(uporabnisko_ime)
+    ime_ucenca = Ucenec.ime_ucenca(id_ucenca)
     return template("ucenec.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, pridobi_domaca_stran=pridobi_domaca_stran)
 
 @get("/ucenci/<uporabnisko_ime>/koledar")

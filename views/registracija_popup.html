@@ -63,22 +63,26 @@
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll('input[name="vrsta"]').forEach((elem) => {
+            document.querySelectorAll("input[name="vrsta"]").forEach((elem) => {
                 elem.addEventListener("change", function(event) {
-                    var cenaContainer = document.getElementById('cena-container');
-                    if (event.target.value == '1') {
-                        cenaContainer.style.display = 'block';
+                    var cenaContainer = document.getElementById("cena-container");
+                    if (event.target.value == "1") {
+                        cenaContainer.style.display = "block";
                     } else {
-                        cenaContainer.style.display = 'none';
+                        cenaContainer.style.display = "none";
                     }
                 });
             });
 
             document.getElementById("cena").addEventListener("focusout", function() {
                 var cena = parseFloat(document.getElementById("cena").value);
-                if (cena > 100.0) {
-                    document.getElementById("cena").setCustomValidity("Cena je lahko maksimalno 100 €.");
-                } else {
+                if (cena > 40.0) {
+                    document.getElementById("cena").setCustomValidity("Cena je lahko maksimalno 40 €.");
+                } 
+                else if (cena < 0) {
+                    document.getElementById("cena").setCustomValidity("Cena ne more biti manjša od 0 €.");
+                }
+                else {
                     document.getElementById("cena").setCustomValidity("");
                 }
             });
