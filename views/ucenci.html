@@ -44,13 +44,11 @@
 <body>
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Učiteljevi učenci</h1></div>
         <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
-            <h1 class="title" class="text-center" style="margin-top: 70px;">
-                Učiteljevi učenci
-            </h1>
             <div class="pagination-buttons">
                 %if page > 1:
                     <a href="/ucitelji/{{ uporabnisko_ime }}/ucenci?page={{ page - 1 }}"><button>← Prejšnjih 100</button></a>

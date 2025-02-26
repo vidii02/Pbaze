@@ -1,3 +1,4 @@
+from datetime import *
 import baza
 import sqlite3
 import os
@@ -153,6 +154,33 @@ class Ucenec:
         for id, ime, priimek, eposta, id_uporabnika in povezava.execute(sql, params):
             results.append(Ucenec(id, ime, priimek, eposta, id_uporabnika))
         return results
+    
+    @staticmethod
+    def pridobi_statistiko(id_ucenca):
+        """Vrne statistiko za določenega učenca"""
+        sql = """
+            SELECT 
+                COUNT(*) AS stevilo_instrukcij,
+                SUM(CASE WHEN status = 'Opravljeno' THEN 1 ELSE 0 END) AS stevilo_opravljenih,
+                SUM(CASE WHEN status = 'Rezervirano' THEN 1 ELSE 0 END) AS stevilo_rezerviranih,
+                SUM(CASE WHEN status = 'Preklicano' THEN 1 ELSE 0 END) AS stevilo_preklicanih,
+                SUM(trajanje) / 60.0 AS skupno_stevilo_ur,
+                (SELECT COUNT(DISTINCT id_ucitelja) FROM instrukcije WHERE id_ucenca = ?) AS stevilo_uciteljev,
+                (SELECT COUNT(DISTINCT id_predmeta) FROM instrukcije WHERE id_ucenca = ?) AS stevilo_predmetov
+            FROM instrukcije
+            WHERE id_ucenca = ?
+        """
+        result = povezava.execute(sql, [id_ucenca, id_ucenca, id_ucenca]).fetchone()
+        statistika = {
+            "stevilo_instrukcij": result[0],
+            "stevilo_opravljenih": result[1],
+            "stevilo_rezerviranih": result[2],
+            "stevilo_preklicanih": result[3],
+            "skupno_stevilo_ur": result[4],
+            "stevilo_uciteljev": result[5],
+            "stevilo_predmetov": result[6]
+        }
+        return statistika
 
 class Admin:
     """Razred za administratorje"""
@@ -276,10 +304,9 @@ class Predmet:
 
 class Instrukcije:
     """Razred za inštrukcije"""
-    def __init__(self, id, datum, cas, trajanje, status, id_ucitelja, id_ucenca, ocena=None, mnenje=None, ime_predmeta=None):
+    def __init__(self, id, datum, trajanje, status, id_ucitelja, id_ucenca, ocena=None, mnenje=None, ime_predmeta=None):
         self.id = id
         self.datum = datum
-        self.cas = cas
         self.trajanje = trajanje
         self.status = status
         self.id_ucitelja = id_ucitelja
@@ -289,23 +316,19 @@ class Instrukcije:
         self.ime_predmeta = ime_predmeta
     
     def __str__(self):
-        return f"Inštrukcije ID: {self.id}, Datum: {self.datum}, Čas: {self.cas}, Trajanje: {self.trajanje} minut, Status: {self.status}, Učitelj ID: {self.id_ucitelja}, Učenec ID: {self.id_ucenca}, Ocena: {self.ocena}, Mnenje: {self.mnenje}, Ime predmeta: {self.ime_predmeta}"
+        return f"Inštrukcije ID: {self.id}, Datum: {self.datum}, Trajanje: {self.trajanje} minut, Status: {self.status}, Učitelj ID: {self.id_ucitelja}, Učenec ID: {self.id_ucenca}, Ocena: {self.ocena}, Mnenje: {self.mnenje}, Ime predmeta: {self.ime_predmeta}"
     
     @staticmethod
     def vse_instrukcije_ucitelja(id_ucitelja, limit=None, offset=None):
         """Vrne vse inštrukcije za določenega učitelja z možnostjo straničenja"""
         sql = """
-            SELECT i.id, i.datum, i.cas, i.trajanje, i.status, i.id_ucitelja, i.id_ucenca, u.ime, u.priimek, u.eposta,
-                   i.ocena, i.mnenje, p.ime_predmeta,
-                   i.datum AS sort_datum,
-                   CAST(CAST(strftime('%d', i.datum) AS INTEGER) || '/' ||
-                        CAST(strftime('%m', i.datum) AS INTEGER) || '/' ||
-                        strftime('%Y', i.datum) AS TEXT) AS prikaz_datum
+            SELECT i.id, i.datum, i.trajanje, i.status, i.id_ucitelja, i.id_ucenca, u.ime, u.priimek, u.eposta,
+                   i.ocena, i.mnenje, p.ime_predmeta
             FROM instrukcije i
             JOIN ucenci u ON i.id_ucenca = u.id
             JOIN predmeti p ON i.id_predmeta = p.id
             WHERE i.id_ucitelja = ?
-            ORDER BY sort_datum ASC
+            ORDER BY i.datum ASC
             """
         params = [id_ucitelja]
         if limit is not None and offset is not None:
@@ -313,8 +336,8 @@ class Instrukcije:
             params.extend([limit, offset])
         results = []
         for row in povezava.execute(sql, params):
-            id, datum, cas, trajanje, status, id_ucitelja, id_ucenca, ime_ucenca, priimek_ucenca, eposta_ucenca, ocena, mnenje, ime_predmeta, sort_datum, prikaz_datum = row
-            instrukcija = Instrukcije(id, prikaz_datum, cas, trajanje, status, id_ucitelja, id_ucenca, ocena, mnenje, ime_predmeta)
+            id, datum, trajanje, status, id_ucitelja, id_ucenca, ime_ucenca, priimek_ucenca, eposta_ucenca, ocena, mnenje, ime_predmeta = row
+            instrukcija = Instrukcije(id, datum, trajanje, status, id_ucitelja, id_ucenca, ocena, mnenje, ime_predmeta)
             instrukcija.ime_ucenca = ime_ucenca
             instrukcija.priimek_ucenca = priimek_ucenca
             instrukcija.eposta_ucenca = eposta_ucenca
@@ -328,8 +351,84 @@ class Instrukcije:
             SELECT * FROM instrukcije WHERE id_ucenca = ?
             """
         results = []
-        for id, datum, cas, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucenca]):
-            results.append(Instrukcije(id, datum, cas, trajanje, status, id_ucitelja, id_ucenca))
+        for id, datum, trajanje, status, id_ucitelja, id_ucenca in povezava.execute(sql, [id_ucenca]):
+            results.append(Instrukcije(id, datum, trajanje, status, id_ucitelja, id_ucenca))
+        return results
+    
+    @staticmethod
+    def filtrirane_instrukcije_ucenec(id_ucenca: int, vrsta_instrukcije: list, week_start: datetime, week_end: datetime, ucitelj: str):
+        sql = """
+            SELECT i.id, i.datum, i.trajanje, i.status, i.id_ucitelja, i.id_ucenca, u.ime, u.priimek, u.eposta,
+                   i.ocena, i.mnenje, p.ime_predmeta, ut.ime || ' ' || ut.priimek AS ucitelj
+            FROM instrukcije i
+            JOIN ucenci u ON i.id_ucenca = u.id
+            JOIN predmeti p ON i.id_predmeta = p.id
+            JOIN ucitelji ut ON i.id_ucitelja = ut.id
+            WHERE i.id_ucenca = ?
+                AND DATE(i.datum) BETWEEN DATE(?) AND DATE(?)
+        """
+        params = [id_ucenca, week_start, week_end]
+
+        if vrsta_instrukcije:
+            sql += " AND (" + " OR ".join(["i.status = ?"] * len(vrsta_instrukcije)) + ")"
+            params.extend(vrsta_instrukcije)
+        else:
+            sql += " AND i.status = '/'"    # Ni izbranega statusa
+
+        if ucitelj:
+            sql += " AND i.id_ucitelja IN (SELECT id FROM ucitelji WHERE ime LIKE ? OR priimek LIKE ?)"
+            params.append(f"{ucitelj}%")
+            params.append(f"{ucitelj}%")
+
+        sql += " ORDER BY i.datum ASC"
+
+        results = []
+        for row in povezava.execute(sql, params):
+            id, datum, trajanje, status, id_ucitelja, id_ucenca, ime_ucenca, priimek_ucenca, eposta_ucenca, ocena, mnenje, ime_predmeta, ucitelj = row
+            instrukcija = Instrukcije(id, datum, trajanje, status, id_ucitelja, id_ucenca, ocena, mnenje, ime_predmeta)
+            instrukcija.ime_ucenca = ime_ucenca
+            instrukcija.priimek_ucenca = priimek_ucenca
+            instrukcija.eposta_ucenca = eposta_ucenca
+            instrukcija.ucitelj = ucitelj
+            results.append(instrukcija)
+        return results
+    
+    @staticmethod
+    def filtrirane_instrukcije_ucitelj(id_ucitelja: int, vrsta_instrukcije: list, week_start: datetime, week_end: datetime, ucenec: str):
+        sql = """
+            SELECT i.id, i.datum, i.trajanje, i.status, i.id_ucitelja, i.id_ucenca, u.ime, u.priimek, u.eposta,
+                   i.ocena, i.mnenje, p.ime_predmeta, ut.ime || ' ' || ut.priimek AS ucitelj
+            FROM instrukcije i
+            JOIN ucenci u ON i.id_ucenca = u.id
+            JOIN predmeti p ON i.id_predmeta = p.id
+            JOIN ucitelji ut ON i.id_ucitelja = ut.id
+            WHERE i.id_ucitelja = ?
+              AND DATE(i.datum) BETWEEN DATE(?) AND DATE(?)
+        """
+        params = [id_ucitelja, week_start, week_end]
+
+        if vrsta_instrukcije:
+            sql += " AND (" + " OR ".join(["i.status = ?"] * len(vrsta_instrukcije)) + ")"
+            params.extend(vrsta_instrukcije)
+        else:
+            sql += " AND i.status = '/'"    # Ni izbranega statusa
+
+        if ucenec:
+            sql += " AND i.id_ucenca IN (SELECT id FROM ucenci WHERE ime LIKE ? OR priimek LIKE ?)"
+            params.append(f"{ucenec}%")
+            params.append(f"{ucenec}%")
+
+        sql += " ORDER BY i.datum ASC"
+
+        results = []
+        for row in povezava.execute(sql, params):
+            id, datum, trajanje, status, id_ucitelja, id_ucenca, ime_ucenca, priimek_ucenca, eposta_ucenca, ocena, mnenje, ime_predmeta, ucitelj = row
+            instrukcija = Instrukcije(id, datum, trajanje, status, id_ucitelja, id_ucenca, ocena, mnenje, ime_predmeta)
+            instrukcija.ime_ucenca = ime_ucenca
+            instrukcija.priimek_ucenca = priimek_ucenca
+            instrukcija.eposta_ucenca = eposta_ucenca
+            instrukcija.ucitelj = ucitelj
+            results.append(instrukcija)
         return results
 
 class UciteljPredmet:

@@ -3,10 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Koledar</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .button-group a {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button-group a:hover {
+            background-color: #0056b3;
+        }
         .filters {
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filters label {
+            margin: 5px;
+            padding: 0;
+            border: none;
+            background: none;
+        }
+        .filters input, .filters select {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .filters button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .filters button:hover {
+            background-color: #0056b3;
         }
         .instruction {
             background-color: #f0f0f0;
@@ -14,38 +55,183 @@
             padding: 5px;
             border-radius: 5px;
         }
+        .multi-select {
+            width: 200px;
+            height: 100px;
+        }
+        .selectBox {
+            position: relative;
+        }
+        .selectBox select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .overSelect {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+        #checkboxes {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: white;
+        }
+        #checkboxes label {
+            display: block;
+        }
+        .status-opravljeno {
+            background-color: #e4fdea;
+        }
+        .status-rezervirano {
+            background-color: #fff7de;
+        }
+        .status-preklicano {
+            background-color: #fde2e4;
+        }
+        .week-navigation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .week-navigation button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .week-navigation button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
     </style>
+    <script>
+        let currentWeekStart = new Date();
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1); // Nastavi na začetek tedna (ponedeljek)
+
+        function updateTable() {
+            const vrsta = Array.from(document.querySelectorAll('#checkboxes input[type="checkbox"]:checked')).map(option => option.value);
+            const datum = document.getElementById('datum') ? document.getElementById('datum').value : null;
+            const ucenec = document.getElementById('ucenec') ? document.getElementById('ucenec').value : null;
+            const ucitelj = document.getElementById('ucitelj') ? document.getElementById('ucitelj').value : null;
+
+            const params = new URLSearchParams();
+            if (vrsta.length > 0) params.append('vrsta', vrsta.join(','));
+            if (datum) params.append('datum', datum);
+            if (ucenec) params.append('ucenec', ucenec);
+            if (ucitelj) params.append('ucitelj', ucitelj);
+            params.append('week_start', currentWeekStart.toISOString().split('T')[0]);
+
+            fetch(`/ucitelji/{{ uporabnisko_ime }}/koledar?${params.toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('.instructions').innerHTML = new DOMParser().parseFromString(html, 'text/html').querySelector('.instructions').innerHTML;
+                    updateWeekLabel();
+                });
+        }
+
+        function changeWeek(offset) {
+            currentWeekStart.setDate(currentWeekStart.getDate() + offset * 7);
+            updateTable();
+        }
+
+        function updateWeekLabel() {
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            const weekStart = currentWeekStart.toLocaleDateString('sl-SI', options);
+            const weekEnd = new Date(currentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            const weekEndFormatted = weekEnd.toLocaleDateString('sl-SI', options);
+            document.getElementById('current-week').textContent = `${weekStart} – ${weekEndFormatted}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#checkboxes input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updateTable);
+            });
+            document.getElementById('datum').addEventListener('change', updateTable);
+            if (document.getElementById('ucenec')) {
+                document.getElementById('ucenec').addEventListener('input', updateTable);
+            }
+            if (document.getElementById('ucitelj')) {
+                document.getElementById('ucitelj').addEventListener('input', updateTable);
+            }
+            updateWeekLabel();
+            updateTable();
+        });
+
+        var expanded = false;
+        function showCheckboxes() {
+            var checkboxes = document.getElementById("checkboxes");
+            if (!expanded) {
+                checkboxes.style.display = "block";
+                expanded = true;
+            } else {
+                checkboxes.style.display = "none";
+                expanded = false;
+            }
+        }
+    </script>
 </head>
 <body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Koledar</h1></div>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
+    </header>
     <section class="section">
         <div class="container">
-            <h1>Koledar</h1>
             <div class="filters">
-                <form method="GET" action="/koledar">
-                    <label for="vrsta">Vrsta:</label>
-                    <select name="vrsta" id="vrsta">
-                        <option value="vse">Vse</option>
-                        <option value="prijavljene">Prijavljene</option>
-                        <option value="neprijavljene">Neprijavljene</option>
-                    </select>
-                    <label for="datum">Datum:</label>
-                    <input type="date" name="datum" id="datum">
-                    <label for="ucitelj">Učitelj:</label>
-                    <input type="text" name="ucitelj" id="ucitelj">
-                    <button type="submit">Išči</button>
+                <form method="GET" action="/ucitelji/{{ uporabnisko_ime }}/koledar" onsubmit="event.preventDefault(); updateTable();">
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes()">
+                            <select>
+                                <option>Izberi vrsto</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes">
+                            <label for="Opravljeno">
+                                <input type="checkbox" name="vrsta" id="prijavljene" value="Opravljeno" />Opravljeno</label>
+                            <label for="Rezervirano">
+                                <input type="checkbox" name="vrsta" id="opravljenih" value="Rezervirano" />Rezervirano</label>
+                            <label for="Preklicano">
+                                <input type="checkbox" name="vrsta" id="neprijavljene" value="Preklicano" />Preklicano</label>
+                        </div>
+                    </div>
+                    % if vrsta == "učitelj":
+                        <label for="ucenec">Učenec:</label>
+                        <input type="text" name="ucenec" id="ucenec">
+                    % else:
+                        <label for="ucitelj">Učitelj:</label>
+                        <input type="text" name="ucitelj" id="ucitelj">
+                    % end
                 </form>
             </div>
+            <div class="week-navigation">
+                <button onclick="changeWeek(-1)">Prejšnji teden</button>
+                <span id="current-week">{{ current_week_start.strftime("%d. %b") }} – {{ current_week_end.strftime("%d. %b %Y") }}</span>
+                <button onclick="changeWeek(1)">Naslednji teden</button>
+            </div>
             <div class="instructions">
-                %for instrukcija in instrukcije:
-                    <div class="instruction">
-                        <div>{{ instrukcija.cas }} - {{ instrukcija.ime_predmeta }}</div>
-                        <div>{{ instrukcija.ime_ucenca }} {{ instrukcija.priimek_ucenca }}</div>
-                        <div>{{ instrukcija.datum }}</div>
-                        <div>{{ instrukcija.ucitelj }}</div>
-                        %if vrsta == "učitelj":
-                            <a href="/rezervacija/{{ instrukcija.id }}">Rezerviraj</a>
-                        %end
-                    </div>
+                % from datetime import datetime, timedelta
+                % for instrukcija in instrukcije:
+                    % datum_instrukcije = datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M")
+                    % if zacetni_datum.date() < datum_instrukcije.date():
+                        <p>{{ datetime.strftime(datum_instrukcije, "%Y-%m-%d") }}</p>
+                        % zacetni_datum = datum_instrukcije
+                    % end
+                        <div class="instruction status-{{ instrukcija.status.lower() }}">
+                            <div>{{ instrukcija.ime_predmeta }}</div>
+                            <div>{{ instrukcija.ime_ucenca }} {{ instrukcija.priimek_ucenca }}</div>
+                            % zacetni_cas = datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M")
+                            % koncni_cas = datetime.strftime(datetime.strptime(zacetni_cas, "%H:%M") + timedelta(minutes = instrukcija.trajanje), "%H:%M")
+                            <div> Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
+                            <div>{{ instrukcija.ucitelj }}</div>
+                        </div>
                 %end
             </div>
         </div>

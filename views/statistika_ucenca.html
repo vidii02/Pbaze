@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Statistika učitelja</title>
+    <title>Statistika učenca</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
         .container {
@@ -22,7 +22,7 @@
 <body>
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
-        <div class="center"><h1>Statistika učitelja {{ime_ucitelja}}</h1></div>
+        <div class="center"><h1>Statistika učenca {{ime_ucenca}}</h1></div>
         <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
@@ -32,11 +32,9 @@
                 <p>Število opravljenih inštrukcij: {{statistika["stevilo_opravljenih"]}}</p>
                 <p>Število rezerviranih inštrukcij: {{statistika["stevilo_rezerviranih"]}}</p>
                 <p>Število preklicanih inštrukcij: {{statistika["stevilo_preklicanih"]}}</p>
-                <p>Skupni zaslužek: {{ "%.2f" % statistika["zasluzek"] }} €</p>
-                <p>Povprečna ocena: {{ "%.1f" % statistika["povprecna_ocena"] }}</p>
-                <p>Število učencev: {{statistika["stevilo_ucencev"]}}</p>
+                <p>Skupno število ur: {{ "%.1f" % statistika["skupno_stevilo_ur"] }}</p>
+                <p>Število učiteljev: {{statistika["stevilo_uciteljev"]}}</p>
                 <p>Število predmetov: {{statistika["stevilo_predmetov"]}}</p>
-                <p>Skupno število ur: {{"%.1f" % statistika["skupno_stevilo_ur"]}}</p>
             </div>
         </div>
     </section>

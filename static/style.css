@@ -4,6 +4,7 @@ header {
     align-items: center;
     padding: 10px;
     background-color: #f8f9fa;
+    height: 50px;
 }
 
 header .left {
@@ -36,4 +37,63 @@ header a.right button {
 
 header a.right button:hover {
     background-color: #c82333;
+}
+
+header .center {
+    flex: 1;
+    text-align: center;
+}
+
+header .center h1 {
+    margin: 0;
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filters label {
+    margin: 5px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.filters input, .filters select {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.filters button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background-color: #0056b3;
+}
+
+.week-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.week-navigation button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.week-navigation button:hover {
+    background-color: #0056b3;
+    color: white;
 }

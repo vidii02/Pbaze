@@ -155,7 +155,6 @@ def uredi_uporabnike():
     
     uporabniki = Uporabnik.vsi_uporabniki(uporabnisko_ime, ime, priimek, eposta, vrsta, cena, cena_operator, page, 100)
     next_page = page + 1 if len(uporabniki) == 100 else None
-    print(f"DEBUG - Filtri: {uporabnisko_ime=}, {ime=}, {priimek=}, {eposta=}, {vrsta=}, {cena=}, {cena_operator=}, {page=}")
     return template("uredi_uporabnike.html", uporabniki=uporabniki, pridobi_domaca_stran=pridobi_domaca_stran, request=request, page=page, next_page=next_page)
 
 
@@ -222,12 +221,22 @@ def statistika_ucitelja(uporabnisko_ime):
 def koledar_ucitelj(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)
     id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
-    vrsta = request.query.vrsta or "vse"
-    datum = request.query.datum or None
-    ucitelj = request.query.ucitelj or None
+    vrsta_instrukcije = request.query.get('vrsta').split(",") if request.query.get('vrsta') else []
+    ucenec = request.query.ucenec or None
 
-    instrukcije = Instrukcije.filtrirane_instrukcije(id_ucitelja, vrsta, datum, ucitelj)
-    return template("koledar.html", instrukcije=instrukcije, uporabnisko_ime=uporabnisko_ime, vrsta="učitelj", pridobi_domaca_stran=pridobi_domaca_stran)
+    week_start_str = request.query.get('week_start')
+    if week_start_str:
+        current_week_start = datetime.strptime(week_start_str, "%Y-%m-%d")
+    else:
+        current_week_start = datetime.now()
+        current_week_start = current_week_start - timedelta(days=current_week_start.weekday())
+
+    current_week_end = current_week_start + timedelta(days=6)
+
+    instrukcije = Instrukcije.filtrirane_instrukcije_ucitelj(id_ucitelja, vrsta_instrukcije, current_week_start, current_week_end, ucenec)
+    return template("koledar.html", instrukcije=instrukcije, zacetni_datum=datetime(1970,1,1), uporabnisko_ime=uporabnisko_ime, vrsta="učitelj", pridobi_domaca_stran=pridobi_domaca_stran, current_week_start=current_week_start, current_week_end=current_week_end)
+
+# TODO: Pripraviti možnost da učitelj doda novi termin inštrukcij
 
 @get("/ucenci/<uporabnisko_ime>")
 def ucenec(uporabnisko_ime):
@@ -236,10 +245,31 @@ def ucenec(uporabnisko_ime):
     ime_ucenca = Ucenec.ime_ucenca(id_ucenca)
     return template("ucenec.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, pridobi_domaca_stran=pridobi_domaca_stran)
 
+@get("/ucenci/<uporabnisko_ime>/statistika")
+def statistika_ucitelja(uporabnisko_ime):
+    preveri_dostop("učenec", uporabnisko_ime)
+    id_ucenca = Ucenec.pridobi_id_ucenca(uporabnisko_ime)
+    ime_ucenca = Ucenec.ime_ucenca(id_ucenca)
+    statistika = Ucenec.pridobi_statistiko(id_ucenca)
+    return template("statistika_ucenca.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, statistika=statistika, pridobi_domaca_stran=pridobi_domaca_stran)
+
 @get("/ucenci/<uporabnisko_ime>/koledar")
 def koledar_ucenec(uporabnisko_ime):
     preveri_dostop("učenec", uporabnisko_ime)
-    instrukcije = Instrukcije.vse_instrukcije_ucenca(Ucenec.pridobi_id_ucenca(uporabnisko_ime))
-    return template("koledar.html", instrukcije=instrukcije, uporabnisko_ime=uporabnisko_ime, vrsta="učenec", pridobi_domaca_stran=pridobi_domaca_stran)
+    id_ucenca = Ucenec.pridobi_id_ucenca(uporabnisko_ime)
+    vrsta_instrukcije = request.query.get('vrsta').split(",") if request.query.get('vrsta') else []
+    ucitelj = request.query.ucitelj or None
+
+    week_start_str = request.query.get('week_start')
+    if week_start_str:
+        current_week_start = datetime.strptime(week_start_str, "%Y-%m-%d")
+    else:
+        current_week_start = datetime.now()
+        current_week_start = current_week_start - timedelta(days=current_week_start.weekday())
+
+    current_week_end = current_week_start + timedelta(days=6)
+
+    instrukcije = Instrukcije.filtrirane_instrukcije_ucenec(id_ucenca, vrsta_instrukcije, current_week_start, current_week_end, ucitelj)
+    return template("koledar.html", instrukcije=instrukcije, zacetni_datum=datetime(1970,1,1), uporabnisko_ime=uporabnisko_ime, vrsta="učenec", pridobi_domaca_stran=pridobi_domaca_stran, current_week_start=current_week_start, current_week_end=current_week_end)
 
 run(host="127.0.0.1", port=8080, debug=True, reloader=True)

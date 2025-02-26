@@ -164,8 +164,7 @@ class Instrukcije(Tabela):
             self.povezava.execute(f"""
                     CREATE TABLE IF NOT EXISTS {self.ime} (
                         ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Datum DATE NOT NULL,
-                        Cas TIME NOT NULL,
+                        Datum DATETIME NOT NULL,
                         Trajanje INTEGER NOT NULL, -- trajanje v minutah
                         Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
                         ID_ucitelja INTEGER NOT NULL,

@@ -44,13 +44,11 @@
 <body>
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Vsi termini inštrukcij</h1></div>
         <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
-            <h1 class="title" class="text-center" style="margin-top: 70px;">
-                Vsi termini inštrukcij
-            </h1>
             <div class="pagination-buttons">
                 %if page > 1:
                     <a href="/ucitelji/{{ uporabnisko_ime }}/instrukcije?page={{ page - 1 }}"><button>← Prejšnjih 100</button></a>
@@ -82,6 +80,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            % from datetime import datetime
                             %for i, instrukcija in enumerate(instrukcije, start=(page - 1) * limit + 1):
                             <tr>
                                 <td>{{ i }}</td>
@@ -89,8 +88,8 @@
                                 <td>{{ instrukcija.priimek_ucenca }}</td>
                                 <td>{{ instrukcija.eposta_ucenca }}</td>
                                 <td>{{ instrukcija.ime_predmeta }}</td>
-                                <td>{{ instrukcija.datum }}</td>
-                                <td>{{ instrukcija.cas }}</td>
+                                <td>{{ datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%Y-%m-%d") }}</td>
+                                <td>{{ datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M") }}</td>
                                 <td>
                                     %if instrukcija.trajanje < 60:
                                         {{ instrukcija.trajanje }} min

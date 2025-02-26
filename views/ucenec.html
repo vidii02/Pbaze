@@ -30,14 +30,13 @@
 <body>
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Pozdravljen/a {{ime_ucenca}}</h1></div>
         <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
-            <h1 class="title" class="text-center" style="margin-top: 70px;">
-                Pozdravljen/a {{ime_ucenca}}
-            </h1>
             <div class="button-group">
+                <a href="/ucenci/{{uporabnisko_ime}}/statistika">Statistika</a>
                 <a href="/ucenci/{{uporabnisko_ime}}/koledar">Koledar</a>
             </div>
         </div>

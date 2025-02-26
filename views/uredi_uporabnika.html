@@ -78,12 +78,12 @@
 <body>
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Uredi uporabnika</h1></div>
         <a href="/odjava" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
             <div class="login-container">
-                <h1>Uredi uporabnika</h1>
                 <form action="/admin/uredi_uporabnike/{{ uporabnik["uporabnisko_ime"] }}" method="post" onsubmit="return validateForm()">
                     <div id="error-message" class="error-message"></div>
                     <label for="uporabnisko_ime">Uporabniško ime:</label>
