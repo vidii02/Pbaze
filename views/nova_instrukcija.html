@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Inštrukcija</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .button-group a, .button-group button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group a:hover, .button-group button:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .form-container label {
+            margin: 5px;
+            padding: 0;
+            border: none;
+            background: none;
+        }
+        .form-container input, .form-container select {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .small-button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .small-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Ustvari Novo Inštrukcijo</h1></div>
+        <a href="{{ pridobi_odjava() }}" class="right"><button>Odjava</button></a>
+    </header>
+    <section class="section">
+        <div class="container">
+            <form method="POST" action="/ucitelji/{{ uporabnisko_ime }}/nova_instrukcija" class="form-container">
+                <label for="ime_predmeta">Ime predmeta:</label>
+                <input type="text" id="ime_predmeta" name="ime_predmeta" required>
+
+                <label for="datum">Datum:</label>
+                <input type="date" id="datum" name="datum" required>
+
+                <label for="trajanje">Trajanje (v minutah):</label>
+                <input type="number" id="trajanje" name="trajanje" required>
+
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="Opravljeno">Opravljeno</option>
+                    <option value="Rezervirano">Rezervirano</option>
+                    <option value="Preklicano">Preklicano</option>
+                </select>
+
+                <button type="submit">Ustvari Inštrukcijo</button>
+            </form>
+            <div class="button-group">
+                <a href="{{ pridobi_url_ucitelj_koledar(uporabnisko_ime) }}" class="small-button">Vrnitev na koledar</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

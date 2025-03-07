@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oceni inštrukcijo</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center"><h1>Oceni inštrukcijo</h1></div>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
+    </header>
+    <section class="section">
+        <div class="container">
+            <form method="POST" action="/oceni/{{ instrukcija.id }}">
+                <div>
+                    <label for="ocena">Ocena (1-5):</label>
+                    <select name="ocena" id="ocena" required>
+                        <option value="">Izberi oceno</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="komentar">Komentar:</label>
+                    <textarea name="komentar" id="komentar" required></textarea>
+                </div>
+                <div>
+                    <button type="submit">Pošlji oceno</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

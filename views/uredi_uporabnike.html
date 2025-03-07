@@ -101,17 +101,17 @@
                         <label for="filter-vrsta">Vrsta:</label>
                         <select id="filter-vrsta" name="vrsta">
                             <option value="" {% if not request.query.vrsta %}selected{% endif %}>Vse</option>
-                            <option value="0" {% if request.query.vrsta == '0' %}selected{% endif %}>Učenec</option>
-                            <option value="1" {% if request.query.vrsta == '1' %}selected{% endif %}>Učitelj</option>
-                            <option value="2" {% if request.query.vrsta == '2' %}selected{% endif %}>Admin</option>
+                            <option value="0" {% if request.query.vrsta == "0" %}selected{% endif %}>Učenec</option>
+                            <option value="1" {% if request.query.vrsta == "1" %}selected{% endif %}>Učitelj</option>
+                            <option value="2" {% if request.query.vrsta == "2" %}selected{% endif %}>Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="filter-cena">Cena:</label>
                         <select id="filter-cena-operator" name="cena_operator">
-                            <option value="eq" {% if request.query.cena_operator == 'eq' %}selected{% endif %}>=</option>
-                            <option value="gte" {% if request.query.cena_operator == 'gte' %}selected{% endif %}>>=</option>
-                            <option value="lte" {% if request.query.cena_operator == 'lte' %}selected{% endif %}><=</option>
+                            <option value="eq" {% if request.query.cena_operator == "eq" %}selected{% endif %}>=</option>
+                            <option value="gte" {% if request.query.cena_operator == "gte" %}selected{% endif %}>>=</option>
+                            <option value="lte" {% if request.query.cena_operator == "lte" %}selected{% endif %}><=</option>
                         </select>
                         <input type="number" id="filter-cena" name="cena" placeholder="Cena" step="0.01" value="{{ request.query.cena or '' }}">
                     </div>
@@ -155,7 +155,7 @@
                             <td>{{ uporabnik["eposta"] }}</td>
                             <td>{{ "Učitelj" if uporabnik["vrsta"] == 1 else "Učenec" if uporabnik["vrsta"] == 0 else "Admin" }}</td>
                             <td>{{ uporabnik["cena"] if uporabnik["vrsta"] == 1 else "" }}</td>
-                            <td><a href="/admin/uredi_uporabnike/{{ uporabnik["uporabnisko_ime"] }}">Uredi</a></td>
+                            <td><a href="/admin/uredi_uporabnike/{{ uporabnik['uporabnisko_ime'] }}">Uredi</a></td>
                         </tr>
                         % end
                     </tbody>

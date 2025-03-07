@@ -11,22 +11,24 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        .button-group a {
+        .button-group a, .button-group button {
             padding: 10px 20px;
             background-color: #007bff;
             color: white;
             text-decoration: none;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
         }
-        .button-group a:hover {
+        .button-group a:hover, .button-group button:hover {
             background-color: #0056b3;
         }
         .filters {
             margin-bottom: 20px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
         }
         .filters label {
             margin: 5px;
@@ -96,17 +98,33 @@
         }
         .week-navigation {
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 10px;
+            margin-top: 20px;
         }
         .week-navigation button {
             padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
         }
         .week-navigation button:hover {
             background-color: #0056b3;
+        }
+        .new-instruction-button {
+            padding: 10px 20px;
+            background-color: #007bff;
             color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .new-instruction-button:hover {
+            background-color: #0056b3;
         }
     </style>
     <script>
@@ -114,24 +132,34 @@
         currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1); // Nastavi na začetek tedna (ponedeljek)
 
         function updateTable() {
-            const vrsta = Array.from(document.querySelectorAll('#checkboxes input[type="checkbox"]:checked')).map(option => option.value);
+            const instrukcija_status = Array.from(document.querySelectorAll('#checkboxes input[type="checkbox"]:checked')).map(option => option.value);
             const datum = document.getElementById('datum') ? document.getElementById('datum').value : null;
             const ucenec = document.getElementById('ucenec') ? document.getElementById('ucenec').value : null;
             const ucitelj = document.getElementById('ucitelj') ? document.getElementById('ucitelj').value : null;
 
             const params = new URLSearchParams();
-            if (vrsta.length > 0) params.append('vrsta', vrsta.join(','));
+            if (instrukcija_status.length > 0) params.append('instrukcija_status', instrukcija_status.join(','));
             if (datum) params.append('datum', datum);
             if (ucenec) params.append('ucenec', ucenec);
             if (ucitelj) params.append('ucitelj', ucitelj);
             params.append('week_start', currentWeekStart.toISOString().split('T')[0]);
 
-            fetch(`/ucitelji/{{ uporabnisko_ime }}/koledar?${params.toString()}`)
+            if (document.getElementById('ucenec')) {
+                fetch(`{{ pridobi_url_ucitelj_koledar(uporabnisko_ime) }}?${params.toString()}`)
                 .then(response => response.text())
                 .then(html => {
                     document.querySelector('.instructions').innerHTML = new DOMParser().parseFromString(html, 'text/html').querySelector('.instructions').innerHTML;
                     updateWeekLabel();
                 });
+            } 
+            else {
+                fetch(`{{ pridobi_url_ucenec_koledar(uporabnisko_ime) }}?${params.toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('.instructions').innerHTML = new DOMParser().parseFromString(html, 'text/html').querySelector('.instructions').innerHTML;
+                    updateWeekLabel();
+                });
+            }
         }
 
         function changeWeek(offset) {
@@ -180,12 +208,12 @@
     <header>
         <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
         <div class="center"><h1>Koledar</h1></div>
-        <a href="/odjava" class="right"><button>Odjava</button></a>
+        <a href="{{ pridobi_odjava() }}" class="right"><button>Odjava</button></a>
     </header>
     <section class="section">
         <div class="container">
             <div class="filters">
-                <form method="GET" action="/ucitelji/{{ uporabnisko_ime }}/koledar" onsubmit="event.preventDefault(); updateTable();">
+                <form method="GET" action="{{ pridobi_url_ucenec_koledar(uporabnisko_ime) }}" onsubmit="event.preventDefault(); updateTable();">
                     <div class="multiselect">
                         <div class="selectBox" onclick="showCheckboxes()">
                             <select>
@@ -195,11 +223,11 @@
                         </div>
                         <div id="checkboxes">
                             <label for="Opravljeno">
-                                <input type="checkbox" name="vrsta" id="prijavljene" value="Opravljeno" />Opravljeno</label>
+                                <input type="checkbox" name="instrukcija_status" id="prijavljene" value="Opravljeno" />Opravljeno</label>
                             <label for="Rezervirano">
-                                <input type="checkbox" name="vrsta" id="opravljenih" value="Rezervirano" />Rezervirano</label>
+                                <input type="checkbox" name="instrukcija_status" id="opravljenih" value="Rezervirano" />Rezervirano</label>
                             <label for="Preklicano">
-                                <input type="checkbox" name="vrsta" id="neprijavljene" value="Preklicano" />Preklicano</label>
+                                <input type="checkbox" name="instrukcija_status" id="neprijavljene" value="Preklicano" />Preklicano</label>
                         </div>
                     </div>
                     % if vrsta == "učitelj":
@@ -210,6 +238,11 @@
                         <input type="text" name="ucitelj" id="ucitelj">
                     % end
                 </form>
+                % if vrsta == "učitelj":
+                    <div class="button-group">
+                        <a href="{{ pridobi_nova_instrukcija(uporabnisko_ime) }}" class="new-instruction-button">Dodaj novo inštrukcijo</a>
+                    </div>
+                % end
             </div>
             <div class="week-navigation">
                 <button onclick="changeWeek(-1)">Prejšnji teden</button>
@@ -226,13 +259,16 @@
                     % end
                         <div class="instruction status-{{ instrukcija.status.lower() }}">
                             <div>{{ instrukcija.ime_predmeta }}</div>
-                            <div>{{ instrukcija.ime_ucenca }} {{ instrukcija.priimek_ucenca }}</div>
+                            <div>{{ instrukcija.ucenec }}</div>
                             % zacetni_cas = datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M")
                             % koncni_cas = datetime.strftime(datetime.strptime(zacetni_cas, "%H:%M") + timedelta(minutes = instrukcija.trajanje), "%H:%M")
                             <div> Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
                             <div>{{ instrukcija.ucitelj }}</div>
+                            % if vrsta == "učenec" and instrukcija.status.lower() == "opravljeno" and instrukcija.ocena is None:
+                                <a href="{{ pridobi_oceni_instrukcijo(instrukcija.id) }}">Oceni predmet</a>
+                            % end
                         </div>
-                %end
+                % end
             </div>
         </div>
     </section>
