@@ -57,6 +57,10 @@ def pridobi_url_ucitelj_koledar(uporabnisko_ime):
 def pridobi_url_ucenec_koledar(uporabnisko_ime):
     return f"/ucenci/{uporabnisko_ime}/koledar"
 
+@get('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root=static_dir)
+
 @get("/")
 def naslovna_stran():
     izbrisi_piskotke()
