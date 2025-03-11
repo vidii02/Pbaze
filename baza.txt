@@ -1,4 +1,4 @@
-CREATE TABLE ucitelji (
+CREATE TABLE IF NOT EXISTS ucitelji (
     ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
     Ime               VARCHAR (50)   NOT NULL,
     Priimek           VARCHAR (50)   NOT NULL,
@@ -7,8 +7,7 @@ CREATE TABLE ucitelji (
     ID_uporabnika     INTEGER        NOT NULL,
     FOREIGN KEY (ID_uporabnika) REFERENCES uporabniki(ID)
 );
-
-CREATE TABLE ucenci (
+CREATE TABLE IF NOT EXISTS ucenci (
     ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
     Ime               VARCHAR (50)   NOT NULL,
     Priimek           VARCHAR (50)   NOT NULL,
@@ -17,22 +16,21 @@ CREATE TABLE ucenci (
     FOREIGN KEY (ID_uporabnika) REFERENCES uporabniki(ID)
 );
 
-CREATE TABLE uporabniki (
+CREATE TABLE IF NOT EXISTS uporabniki (
     ID                INTEGER        PRIMARY KEY AUTOINCREMENT,
-    Uporabnisko_ime   VARCHAR (100)   NOT NULL UNIQUE,
+    Uporabnisko_ime   VARCHAR (50)   NOT NULL UNIQUE,
     Geslo             VARCHAR (100)  NOT NULL,
     Vrsta             INTEGER        NOT NULL CHECK(Vrsta IN (0, 1, 2)) -- 0 za učence, 1 za učitelje, 2 za admin
 );
 
-CREATE TABLE predmeti (
+CREATE TABLE IF NOT EXISTS predmeti (
     ID           INTEGER       PRIMARY KEY AUTOINCREMENT,
     Ime_predmeta VARCHAR (100) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS {self.ime} (
+CREATE TABLE IF NOT EXISTS instrukcije (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Datum DATE NOT NULL,
-    Cas TIME NOT NULL,
+    Datum DATETIME NOT NULL,
     Trajanje INTEGER NOT NULL, -- trajanje v minutah
     Status TEXT NOT NULL CHECK(Status IN ('Rezervirano', 'Opravljeno', 'Preklicano')),
     ID_ucitelja INTEGER NOT NULL,
@@ -45,10 +43,10 @@ CREATE TABLE IF NOT EXISTS {self.ime} (
     FOREIGN KEY (ID_predmeta) REFERENCES predmeti(ID)
 );
 
-CREATE TABLE uciteljiPredmeti (
+CREATE TABLE IF NOT EXISTS uciteljiPredmeti (
     ID_ucitelja INTEGER NOT NULL,
     ID_predmeta INTEGER NOT NULL,
     PRIMARY KEY (ID_ucitelja, ID_predmeta),
-    FOREIGN KEY (ID_ucitelja) REFERENCES Ucitelji(ID),
-    FOREIGN KEY (ID_predmeta) REFERENCES Predmeti(ID)
+    FOREIGN KEY (ID_ucitelja) REFERENCES ucitelji(ID),
+    FOREIGN KEY (ID_predmeta) REFERENCES predmeti(ID)
 );

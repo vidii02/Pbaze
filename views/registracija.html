@@ -32,6 +32,19 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        .login-container form .radio-group {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+        .login-container form .radio-group div {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .login-container form .radio-group label {
+            margin-left: 5px;
+        }
         .login-container form button {
             padding: 10px 20px;
             border: none;
@@ -94,20 +107,74 @@
                     document.getElementById("ponovi_geslo").setCustomValidity("");
                 }
             });
+
+            document.querySelectorAll("input[name='vrsta']").forEach((elem) => {
+                elem.addEventListener("change", function(event) {
+                    var cenaContainer = document.getElementById("cena-container");
+                    if (event.target.value == "1") {
+                        cenaContainer.style.display = "block";
+                    } else {
+                        cenaContainer.style.display = "none";
+                    }
+                });
+            });
+
+            document.getElementById("cena").addEventListener("focusout", function() {
+                var cena = parseFloat(document.getElementById("cena").value);
+                if (cena > 40.0) {
+                    document.getElementById("cena").setCustomValidity("Cena je lahko maksimalno 40 €.");
+                } 
+                else if (cena < 0) {
+                    document.getElementById("cena").setCustomValidity("Cena ne more biti manjša od 0 €.");
+                }
+                else {
+                    document.getElementById("cena").setCustomValidity("");
+                }
+            });
         });
+
+        function showPopup(message, redirectUrl) {
+            alert(message);
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 3000);
+        }
     </script>
 </head>
 <body>
     <div class="login-container">
         <h1>Registracija</h1>
-        <form id="registracija-form" action="/registracija" method="post">
+        <form id="registracija-form" action="/registracija" method="post" onsubmit="showPopup('Registracija je bila uspešna!', '/prijava')">
             <label for="uporabnisko_ime">Uporabniško ime:</label>
             <input type="text" id="uporabnisko_ime" name="uporabnisko_ime" placeholder="uporabniško ime" required>
             <label for="geslo">Geslo:</label>
             <input type="password" id="geslo" name="geslo" placeholder="geslo" required>
             <label for="ponovi_geslo">Ponovi geslo:</label>
             <input type="password" id="ponovi_geslo" name="ponovi_geslo" placeholder="ponovi geslo" required>
-            <button type="submit" class="btn btn-outline-success">Naprej</button>
+            <div class="form-group">
+                <label for="vrsta">Vrsta:</label>
+                <div class="radio-group">
+                    <div>
+                        <input type="radio" id="ucenec" name="vrsta" value="0" required>
+                        <label for="ucenec">Učenec</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="ucitelj" name="vrsta" value="1" required>
+                        <label for="ucitelj">Učitelj</label>
+                    </div>
+                </div>
+            </div>
+            <label for="ime">Ime:</label>
+            <input type="text" id="ime" name="ime" placeholder="ime" required>
+            <label for="priimek">Priimek:</label>
+            <input type="text" id="priimek" name="priimek" placeholder="priimek" required>
+            <label for="eposta">E-pošta:</label>
+            <input type="email" id="eposta" name="eposta" placeholder="e-pošta" required>
+            <div id="cena-container" style="display: none;">
+                <label for="cena">Cena (€):</label>
+                <input type="number" id="cena" name="cena" step="0.01" placeholder="cena">
+            </div>
+            <button type="submit" class="btn btn-outline-success">Registriraj se</button>
         </form>
         <p id="napaka" class="error-message"></p>
         <p class="center-text">Že imate račun? <a href="/prijava">Prijavite se</a></p>

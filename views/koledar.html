@@ -251,23 +251,29 @@
             </div>
             <div class="instructions">
                 % from datetime import datetime, timedelta
+                % zacetni_datum = datetime(1970, 1, 1)
                 % for instrukcija in instrukcije:
                     % datum_instrukcije = datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M")
                     % if zacetni_datum.date() < datum_instrukcije.date():
                         <p>{{ datetime.strftime(datum_instrukcije, "%Y-%m-%d") }}</p>
                         % zacetni_datum = datum_instrukcije
                     % end
-                        <div class="instruction status-{{ instrukcija.status.lower() }}">
-                            <div>{{ instrukcija.ime_predmeta }}</div>
-                            <div>{{ instrukcija.ucenec }}</div>
-                            % zacetni_cas = datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M")
-                            % koncni_cas = datetime.strftime(datetime.strptime(zacetni_cas, "%H:%M") + timedelta(minutes = instrukcija.trajanje), "%H:%M")
-                            <div> Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
-                            <div>{{ instrukcija.ucitelj }}</div>
-                            % if vrsta == "učenec" and instrukcija.status.lower() == "opravljeno" and instrukcija.ocena is None:
-                                <a href="{{ pridobi_oceni_instrukcijo(instrukcija.id) }}">Oceni predmet</a>
-                            % end
-                        </div>
+                    <div class="instruction status-{{ instrukcija.status.lower() }}">
+                        <div>{{ instrukcija.ime_predmeta }}</div>
+                        <div>{{ instrukcija.ucenec }}</div>
+                        % zacetni_cas = datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M")
+                        % koncni_cas = datetime.strftime(datetime.strptime(zacetni_cas, "%H:%M") + timedelta(minutes = instrukcija.trajanje), "%H:%M")
+                        <div> Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
+                        <div>{{ instrukcija.ucitelj }}</div>
+                        <div>Ocena: {{ instrukcija.ocena if instrukcija.ocena else 'Ni ocenjena' }}</div>
+                        <div>Mnenje: {{ instrukcija.mnenje if instrukcija.mnenje else 'Ni mnenja' }}</div>
+                        % if vrsta == "učitelj":
+                            <a href="{{ pridobi_url_uredi_instrukcijo(uporabnisko_ime, instrukcija.id) }}">Uredi</a>
+                        % end
+                        % if vrsta == "učenec" and instrukcija.status.lower() == "opravljeno" and instrukcija.ocena is None:
+                            <a href="{{ pridobi_oceni_instrukcijo(instrukcija.id) }}">Oceni predmet</a>
+                        % end
+                    </div>
                 % end
             </div>
         </div>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Statistika</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 70px;
+        }
+        .statistika {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+        .statistika p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ pridobi_domaca_stran() }}" class="left"><button>Domov</button></a>
+        <div class="center">
+            <h1>
+                % if vrsta == "učitelj":
+                    Statistika učitelja {{ime_ucitelja}}
+                % elif vrsta == "učenec":
+                    Statistika učenca {{ime_ucenca}}
+                % end
+            </h1>
+        </div>
+        <a href="/odjava" class="right"><button>Odjava</button></a>
+    </header>
+    <section class="section">
+        <div class="container">
+            <div class="statistika">
+                <p>Število inštrukcij: {{statistika["stevilo_instrukcij"]}}</p>
+                <p>Število opravljenih inštrukcij: {{statistika["stevilo_opravljenih"]}}</p>
+                <p>Število rezerviranih inštrukcij: {{statistika["stevilo_rezerviranih"]}}</p>
+                <p>Število preklicanih inštrukcij: {{statistika["stevilo_preklicanih"]}}</p>
+                <p>Skupno število ur: {{ "%.1f" % statistika["skupno_stevilo_ur"] }}</p>
+                <p>Število predmetov: {{statistika["stevilo_predmetov"]}}</p>
+                % if vrsta == "učitelj":
+                    <p>Skupni zaslužek: {{ "%.2f" % statistika["zasluzek"] }} €</p>
+                    <p>Povprečna ocena: {{ "%.1f" % statistika["povprecna_ocena"] }}</p>
+                    <p>Število učencev: {{statistika["stevilo_ucencev"]}}</p>
+                    <p>Stopnja uspešnosti rezervacij: {{ "%.2f" % statistika["stopnja_uspesnosti_rezervacij"] }}%</p>
+                    <p>Povprečno trajanje inštrukcije: {{ "%.1f" % statistika["povprecno_trajanje"] }} minut</p>
+                    <p>Povprečen zaslužek na inštrukcijo: {{ "%.2f" % statistika["povprecen_zasluzek_na_instrukcijo"] }} €</p>
+                    <p>Najpogostejši predmet: {{ statistika["najpogostejsi_predmet"] }}</p>
+                    <p>Najpogostejši učenec: {{ statistika["najpogostejsi_ucenec"] }}</p>
+                % elif vrsta == "učenec":
+                    <p>Število učiteljev: {{statistika["stevilo_uciteljev"]}}</p>
+                    <p>Povprečna dolžina inštrukcije: {{ "%.1f" % statistika["povprecna_dolzina_instrukcije"] }} minut</p>
+                    <p>Največkrat izbran predmet: {{ statistika["najpogostejsi_predmet"] }}</p>
+                    <p>Največkrat izbran učitelj: {{ statistika["najpogostejsi_ucitelj"] }}</p>
+                    <p>Povprečna ocena podanih mnenj: {{ "%.1f" % statistika["povprecna_ocena"] }}</p>
+                % end
+            </div>
+        </div>
+    </section>
+</body>
+</html>

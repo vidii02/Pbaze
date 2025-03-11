@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <title>Nova Inštrukcija</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .button-group {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
         .button-group a, .button-group button {
             padding: 10px 20px;
@@ -25,7 +27,7 @@
         }
         .form-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 10px;
             align-items: center;
             justify-content: center;
@@ -42,6 +44,25 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            width: 200px;
+        }
+        .form-container .time-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .form-container .filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-container .filter-container label,
+        .form-container .filter-container select,
+        .form-container .filter-container input {
+            vertical-align: middle;
+        }
+        .form-container .filter-container:first-child {
+            margin-top: 40px;
         }
         .form-container button {
             background-color: #007bff;
@@ -50,6 +71,7 @@
             cursor: pointer;
             padding: 10px 20px;
             border-radius: 5px;
+            margin-top: 20px;
         }
         .form-container button:hover {
             background-color: #0056b3;
@@ -66,7 +88,145 @@
         .small-button:hover {
             background-color: #0056b3;
         }
+        .number-input {
+            display: flex;
+            align-items: center;
+        }
+        .number-input button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            vertical-align: middle;
+        }
+        .number-input button:hover {
+            background-color: #0056b3;
+        }
+        .number-input input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        .form-container select.time-select {
+            width: 60px;
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#ucenec").select2({
+                placeholder: "Začni tipkati ime učenca...",
+                ajax: {
+                    url: "/isci_ucenca",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            query: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(student => ({
+                                id: student.id,
+                                text: student.name
+                            }))
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 3
+            });
+
+            $("#id_predmeta").select2({
+                placeholder: "Izberi predmet...",
+                ajax: {
+                    url: "/isci_predmet",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            query: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(predmet => ({
+                                id: predmet.id,
+                                text: predmet.ime_predmeta
+                            }))
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+
+        function validateForm() {
+            const imePredmeta = document.getElementById("id_predmeta").value;
+            const trajanje = parseInt(document.getElementById("trajanje").value);
+
+            if (!imePredmeta) {
+                alert("Ime predmeta ni veljavno.");
+                return false;
+            }
+
+            if (trajanje < 10 || trajanje > 240) {
+                alert("Čas trajanja mora biti med 10 in 240 minutami.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function incrementValue(e) {
+            e.preventDefault();
+            const fieldName = e.target.dataset.field;
+            const parent = e.target.closest('div');
+            const field = parent.querySelector('input[name=' + fieldName + ']');
+            let currentVal = parseInt(field.value, 10);
+
+            if (!isNaN(currentVal) && currentVal < 240) {
+                field.value = currentVal + 10;
+            } else {
+                field.value = 240;
+            }
+        }
+
+        function decrementValue(e) {
+            e.preventDefault();
+            const fieldName = e.target.dataset.field;
+            const parent = e.target.closest('div');
+            const field = parent.querySelector('input[name=' + fieldName + ']');
+            let currentVal = parseInt(field.value, 10);
+
+            if (!isNaN(currentVal) && currentVal > 10) {
+                field.value = currentVal - 10;
+            } else {
+                field.value = 10;
+            }
+        }
+
+        function showPopup() {
+            const imePredmeta = document.getElementById("id_predmeta").selectedOptions[0].text;
+            const datum = document.getElementById("datum").value.replace("T", " ");
+            const trajanje = document.getElementById("trajanje").value;
+            const status = document.getElementById("status").selectedOptions[0].text;
+            const ucenec = document.getElementById("ucenec").selectedOptions[0].text;
+        
+            const message = `Preverite podatke:\n\nIme predmeta: ${imePredmeta}\nDatum: ${datum}\nTrajanje: ${trajanje} minut\nStatus: ${status}\nUčenec: ${ucenec}\n\nAli želite nadaljevati?`;
+        
+            return confirm(message);
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -76,24 +236,41 @@
     </header>
     <section class="section">
         <div class="container">
-            <form method="POST" action="/ucitelji/{{ uporabnisko_ime }}/nova_instrukcija" class="form-container">
-                <label for="ime_predmeta">Ime predmeta:</label>
-                <input type="text" id="ime_predmeta" name="ime_predmeta" required>
+            <form method="POST" action="/ucitelji/{{ uporabnisko_ime }}/nova_instrukcija" class="form-container" onsubmit="return validateForm()">
+                <div class="filter-container">
+                    <label for="id_predmeta">Ime predmeta:</label>
+                    <select id="id_predmeta" name="id_predmeta" required></select>
+                </div>
 
-                <label for="datum">Datum:</label>
-                <input type="date" id="datum" name="datum" required>
+                <div class="filter-container">
+                    <label for="datum">Datum:</label>
+                    <input type="datetime-local" id="datum" name="datum" required>
+                </div>
 
-                <label for="trajanje">Trajanje (v minutah):</label>
-                <input type="number" id="trajanje" name="trajanje" required>
+                <div class="filter-container">
+                    <label for="trajanje">Trajanje (v minutah):</label>
+                    <div class="number-input">
+                        <button onclick="decrementValue(event)" data-field="trajanje">-</button>
+                        <input type="number" id="trajanje" name="trajanje" value="60" min="10" max="240" readonly>
+                        <button onclick="incrementValue(event)" data-field="trajanje">+</button>
+                    </div>
+                </div>
 
-                <label for="status">Status:</label>
-                <select id="status" name="status" required>
-                    <option value="Opravljeno">Opravljeno</option>
-                    <option value="Rezervirano">Rezervirano</option>
-                    <option value="Preklicano">Preklicano</option>
-                </select>
+                <div class="filter-container">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" required>
+                        <option value="Opravljeno">Opravljeno</option>
+                        <option value="Rezervirano">Rezervirano</option>
+                        <option value="Preklicano">Preklicano</option>
+                    </select>
+                </div>
 
-                <button type="submit">Ustvari Inštrukcijo</button>
+                <div class="filter-container">
+                    <label for="ucenec">Učenec:</label>
+                    <select id="ucenec" name="ucenec" required></select>
+                </div>
+
+                <button type="submit" onclick="return showPopup()">Ustvari inštrukcijo</button>
             </form>
             <div class="button-group">
                 <a href="{{ pridobi_url_ucitelj_koledar(uporabnisko_ime) }}" class="small-button">Vrnitev na koledar</a>

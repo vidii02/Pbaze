@@ -2,6 +2,7 @@ from bottle import *
 from model import *
 import secrets
 import os
+import json
 from datetime import datetime, timedelta
 
 secret_key = secrets.token_hex(42)
@@ -57,6 +58,25 @@ def pridobi_url_ucitelj_koledar(uporabnisko_ime):
 def pridobi_url_ucenec_koledar(uporabnisko_ime):
     return f"/ucenci/{uporabnisko_ime}/koledar"
 
+def pridobi_url_uredi_instrukcijo(uporabnisko_ime, id_instrukcije):
+    return f"/ucitelji/{uporabnisko_ime}/uredi_instrukcijo/{id_instrukcije}"
+
+@route("/isci_ucenca")
+def isci_ucenca():
+    query = request.query.get("query", "")
+    data = Ucenec.pridobi_ucence_za_delno_ime(query)
+
+    response.content_type = "application/json"
+    return json.dumps(data)
+
+@route("/isci_predmet")
+def isci_predmet():
+    query = request.query.get("query", "")
+    data = Predmet.pridobi_predmete_za_delno_ime(query)
+
+    response.content_type = "application/json"
+    return json.dumps(data)
+
 @get('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root=static_dir)
@@ -101,19 +121,10 @@ def odjava():
 
 @get("/registracija")
 def registracija():
-    return template("registracija.html")
+    return template("registracija.html", pridobi_url_domaca_stran=pridobi_url_domaca_stran)
 
 @post("/registracija")
 def registracija_post():
-    uporabnisko_ime = request.forms.get("uporabnisko_ime")
-    geslo = request.forms.get("geslo")
-    ponovi_geslo = request.forms.get("ponovi_geslo")
-    if geslo != ponovi_geslo:
-        return template("registracija.html")
-    return template("registracija_popup.html", uporabnisko_ime=uporabnisko_ime, geslo=geslo, napaka=None)
-
-@post("/registracija_popup")
-def registracija_popup_post():
     uporabnisko_ime = request.forms.get("uporabnisko_ime")
     geslo = request.forms.get("geslo")
     vrsta = int(request.forms.get("vrsta"))
@@ -121,6 +132,7 @@ def registracija_popup_post():
     priimek = request.forms.get("priimek")
     eposta = request.forms.get("eposta")
     cena = request.forms.get("cena") if vrsta == 1 else None
+    
     registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, eposta, cena)
     redirect("/prijava")
     
@@ -158,19 +170,31 @@ def vsi_ucenci():
 
 @get("/admin/uredi_uporabnike")
 def uredi_uporabnike():
-    preveri_dostop("admin")
-    uporabnisko_ime = request.query.uporabnisko_ime
-    ime = request.query.ime
-    priimek = request.query.priimek
-    eposta = request.query.eposta
-    vrsta = request.query.vrsta
-    cena = request.query.cena
-    cena_operator = request.query.cena_operator
+    uporabnisko_ime = request.query.uporabnisko_ime or ""
+    ime = request.query.ime or ""
+    priimek = request.query.priimek or ""
+    eposta = request.query.eposta or ""
+    vrsta = request.query.vrsta or ""
+    cena_operator = request.query.cena_operator or "eq"
+    cena = request.query.cena or ""
     page = int(request.query.page or 1)
-    
-    uporabniki = Uporabnik.vsi_uporabniki(uporabnisko_ime, ime, priimek, eposta, vrsta, cena, cena_operator, page, 100)
-    next_page = page + 1 if len(uporabniki) == 100 else None
-    return template("uredi_uporabnike.html", uporabniki=uporabniki, pridobi_domaca_stran=pridobi_url_domaca_stran, request=request, page=page, next_page=next_page)
+    limit = 100
+
+    uporabniki = Admin.pridobi_uporabnike(uporabnisko_ime, ime, priimek, eposta, vrsta, cena_operator, cena, page, limit)
+    next_page = page + 1 if len(uporabniki) == limit else None
+
+    return template("uredi_uporabnike.html", 
+                    uporabniki=uporabniki, 
+                    uporabnisko_ime=uporabnisko_ime, 
+                    ime=ime, 
+                    priimek=priimek, 
+                    eposta=eposta, 
+                    vrsta=vrsta, 
+                    cena_operator=cena_operator, 
+                    cena=cena,
+                    page=page,
+                    next_page=next_page,
+                    pridobi_domaca_stran=pridobi_url_domaca_stran)
 
 @get("/admin/uredi_uporabnike/<uporabnisko_ime>")
 def uredi_uporabnika(uporabnisko_ime):
@@ -229,7 +253,7 @@ def statistika_ucitelja(uporabnisko_ime):
     id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
     ime_ucitelja = Ucitelj.ime_ucitelja(id_ucitelja)
     statistika = Ucitelj.pridobi_statistiko(id_ucitelja)
-    return template("statistika_ucitelja.html", uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, statistika=statistika, pridobi_domaca_stran=pridobi_url_domaca_stran)
+    return template("statistika.html", uporabnisko_ime=uporabnisko_ime, ime_ucitelja=ime_ucitelja, statistika=statistika, pridobi_domaca_stran=pridobi_url_domaca_stran, vrsta="učitelj")
 
 @get("/ucitelji/<uporabnisko_ime>/koledar")
 def koledar_ucitelj(uporabnisko_ime):
@@ -259,6 +283,7 @@ def koledar_ucitelj(uporabnisko_ime):
                     pridobi_oceni_instrukcijo=pridobi_url_oceni_instrukcijo,
                     pridobi_url_ucitelj_koledar = pridobi_url_ucitelj_koledar,
                     pridobi_url_ucenec_koledar = pridobi_url_ucenec_koledar,
+                    pridobi_url_uredi_instrukcijo = pridobi_url_uredi_instrukcijo,
                     current_week_start=current_week_start, 
                     current_week_end=current_week_end)
 
@@ -268,22 +293,48 @@ def nova_instrukcija(uporabnisko_ime):
     return template("nova_instrukcija.html", 
                     uporabnisko_ime=uporabnisko_ime, 
                     pridobi_domaca_stran=pridobi_url_domaca_stran, 
-                    pridobi_odjava=pridobi_url_odjava, 
-                    pridobi_nova_instrukcija=pridobi_url_nova_instrukcija, 
-                    pridobi_oceni_instrukcijo=pridobi_url_oceni_instrukcijo,
-                    pridobi_url_ucitelj_koledar = pridobi_url_ucitelj_koledar,
-                    pridobi_url_ucenec_koledar = pridobi_url_ucenec_koledar)
+                    pridobi_odjava=pridobi_url_odjava,
+                    pridobi_url_ucitelj_koledar = pridobi_url_ucitelj_koledar)
 
 @post("/ucitelji/<uporabnisko_ime>/nova_instrukcija")
 def nova_instrukcija_post(uporabnisko_ime):
     preveri_dostop("učitelj", uporabnisko_ime)
-    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
-    ime_predmeta = request.forms.get("ime_predmeta")
-    datum = request.forms.get("datum")
-    trajanje = request.forms.get("trajanje")
+    datum = request.forms.get("datum").replace("T", " ")
+    trajanje = int(request.forms.get("trajanje"))
     status = request.forms.get("status")
+    id_ucitelja = Ucitelj.pridobi_id_ucitelja(uporabnisko_ime)
+    id_ucenca = request.forms.get("ucenec")
+    id_predmeta = request.forms.get("id_predmeta")
+    ocena = request.forms.get("ocena")
+    mnenje = request.forms.get("mnenje")
+    
+    Instrukcije.dodaj_instrukcijo(datum, trajanje, status, id_ucitelja, id_ucenca, id_predmeta, ocena, mnenje)
+    
+    redirect(f"/ucitelji/{uporabnisko_ime}/koledar")
 
-    Instrukcije.dodaj_instrukcijo(id_ucitelja, ime_predmeta, datum, trajanje, status)
+@get("/ucitelji/<uporabnisko_ime>/uredi_instrukcijo/<id_instrukcije>")
+def uredi_instrukcijo(uporabnisko_ime, id_instrukcije):
+    preveri_dostop("učitelj")
+    instrukcija = Instrukcije.pridobi_instrukcijo(id_instrukcije)
+    return template("uredi_instrukcijo.html", 
+                    uporabnisko_ime=uporabnisko_ime, 
+                    instrukcija=instrukcija, 
+                    pridobi_domaca_stran=pridobi_url_domaca_stran, 
+                    pridobi_odjava=pridobi_url_odjava,
+                    pridobi_url_ucitelj_koledar=pridobi_url_ucitelj_koledar)
+
+@post("/ucitelji/<uporabnisko_ime>/uredi_instrukcijo/<id_instrukcije>")
+def uredi_instrukcijo_post(uporabnisko_ime, id_instrukcije):
+    preveri_dostop("učitelj")
+    datum = request.forms.get("datum").replace("T", " ")
+    trajanje = int(request.forms.get("trajanje"))
+    status = request.forms.get("status")
+    id_ucenca = request.forms.get("ucenec")
+    id_predmeta = request.forms.get("ime_predmeta")
+    ocena = request.forms.get("ocena")
+    mnenje = request.forms.get("mnenje")
+    
+    Instrukcije.posodobi_instrukcijo(id_instrukcije, datum, trajanje, status, id_ucenca, id_predmeta, ocena, mnenje)
     
     redirect(f"/ucitelji/{uporabnisko_ime}/koledar")
 
@@ -295,12 +346,12 @@ def ucenec(uporabnisko_ime):
     return template("ucenec.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, pridobi_domaca_stran=pridobi_url_domaca_stran)
 
 @get("/ucenci/<uporabnisko_ime>/statistika")
-def statistika_ucitelja(uporabnisko_ime):
+def statistika_ucenca(uporabnisko_ime):
     preveri_dostop("učenec", uporabnisko_ime)
     id_ucenca = Ucenec.pridobi_id_ucenca(uporabnisko_ime)
     ime_ucenca = Ucenec.ime_ucenca(id_ucenca)
     statistika = Ucenec.pridobi_statistiko(id_ucenca)
-    return template("statistika_ucenca.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, statistika=statistika, pridobi_domaca_stran=pridobi_url_domaca_stran)
+    return template("statistika.html", uporabnisko_ime=uporabnisko_ime, ime_ucenca=ime_ucenca, statistika=statistika, pridobi_domaca_stran=pridobi_url_domaca_stran, vrsta="učenec")
 
 @get("/ucenci/<uporabnisko_ime>/koledar")
 def koledar_ucenec(uporabnisko_ime):

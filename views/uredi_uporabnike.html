@@ -11,6 +11,8 @@
         }
         .filters {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
         }
         .filters form {
             display: flex;
@@ -80,40 +82,40 @@
     <section class="section">
         <div class="container">
             <div class="filters">
-                <form method="get" action="/admin/uredi_uporabnike">
+                                <form method="get" action="/admin/uredi_uporabnike">
                     <div class="form-group">
                         <label for="filter-uporabnisko-ime">Uporabniško ime:</label>
-                        <input type="text" id="filter-uporabnisko-ime" name="uporabnisko_ime" placeholder="Uporabniško ime" value="{{ request.query.uporabnisko_ime or '' }}">
+                        <input type="text" id="filter-uporabnisko-ime" name="uporabnisko_ime" placeholder="Uporabniško ime" value="{{ uporabnisko_ime }}">
                     </div>
                     <div class="form-group">
                         <label for="filter-ime">Ime:</label>
-                        <input type="text" id="filter-ime" name="ime" placeholder="Ime" value="{{ request.query.ime or '' }}">
+                        <input type="text" id="filter-ime" name="ime" placeholder="Ime" value="{{ ime }}">
                     </div>
                     <div class="form-group">
                         <label for="filter-priimek">Priimek:</label>
-                        <input type="text" id="filter-priimek" name="priimek" placeholder="Priimek" value="{{ request.query.priimek or '' }}">
+                        <input type="text" id="filter-priimek" name="priimek" placeholder="Priimek" value="{{ priimek }}">
                     </div>
                     <div class="form-group">
                         <label for="filter-eposta">E-pošta:</label>
-                        <input type="email" id="filter-eposta" name="eposta" placeholder="E-pošta" value="{{ request.query.eposta or '' }}">
+                        <input type="email" id="filter-eposta" name="eposta" placeholder="E-pošta" value="{{ eposta }}">
                     </div>
                     <div class="form-group">
                         <label for="filter-vrsta">Vrsta:</label>
                         <select id="filter-vrsta" name="vrsta">
-                            <option value="" {% if not request.query.vrsta %}selected{% endif %}>Vse</option>
-                            <option value="0" {% if request.query.vrsta == "0" %}selected{% endif %}>Učenec</option>
-                            <option value="1" {% if request.query.vrsta == "1" %}selected{% endif %}>Učitelj</option>
-                            <option value="2" {% if request.query.vrsta == "2" %}selected{% endif %}>Admin</option>
+                            <option value="" {% if not vrsta %}selected{% endif %}>Vse</option>
+                            <option value="0" {% if vrsta == "0" %}selected{% endif %}>Učenec</option>
+                            <option value="1" {% if vrsta == "1" %}selected{% endif %}>Učitelj</option>
+                            <option value="2" {% if vrsta == "2" %}selected{% endif %}>Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="filter-cena">Cena:</label>
                         <select id="filter-cena-operator" name="cena_operator">
-                            <option value="eq" {% if request.query.cena_operator == "eq" %}selected{% endif %}>=</option>
-                            <option value="gte" {% if request.query.cena_operator == "gte" %}selected{% endif %}>>=</option>
-                            <option value="lte" {% if request.query.cena_operator == "lte" %}selected{% endif %}><=</option>
+                            <option value="eq" {% if cena_operator == "eq" %}selected{% endif %}>=</option>
+                            <option value="gte" {% if cena_operator == "gte" %}selected{% endif %}>>=</option>
+                            <option value="lte" {% if cena_operator == "lte" %}selected{% endif %}><=</option>
                         </select>
-                        <input type="number" id="filter-cena" name="cena" placeholder="Cena" step="0.01" value="{{ request.query.cena or '' }}">
+                        <input type="number" id="filter-cena" name="cena" placeholder="Cena" step="0.01" value="{{ cena }}">
                     </div>
                     <button type="submit" class="btn btn-outline-success">Filtriraj</button>
                 </form>

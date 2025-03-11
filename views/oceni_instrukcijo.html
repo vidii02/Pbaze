@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Oceni inštrukcijo</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -13,7 +18,7 @@
     </header>
     <section class="section">
         <div class="container">
-            <form method="POST" action="/oceni/{{ instrukcija.id }}">
+            <form method="POST" action="/oceni/{{ instrukcija.id }}" onsubmit="showAlert('Inštrukcija je bila ocenjena!')">
                 <div>
                     <label for="ocena">Ocena (1-5):</label>
                     <select name="ocena" id="ocena" required>
