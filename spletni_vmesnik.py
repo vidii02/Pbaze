@@ -96,7 +96,7 @@ def prijava():
 def prijava_post():
     uporabnisko_ime = request.forms.get("uporabnisko_ime")
     geslo = request.forms.get("geslo")
-    uporabnik = preveri_uporabnika(uporabnisko_ime, geslo)
+    uporabnik = Uporabnik.preveri_uporabnika(uporabnisko_ime, geslo)
     if uporabnik:
         response.set_cookie("uporabnisko_ime", uporabnisko_ime, secret=secret_key)
         response.set_cookie("geslo", geslo, secret=secret_key)
@@ -133,13 +133,13 @@ def registracija_post():
     eposta = request.forms.get("eposta")
     cena = request.forms.get("cena") if vrsta == 1 else None
     
-    registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, eposta, cena)
+    Uporabnik.registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, eposta, cena)
     redirect("/prijava")
     
 @get("/preveri_uporabnisko_ime")
 def preveri_uporabnisko_ime_v_bazi():
     uporabnisko_ime = request.query.uporabnisko_ime
-    obstaja = preveri_uporabnisko_ime(uporabnisko_ime)
+    obstaja = Uporabnik.preveri_uporabnisko_ime(uporabnisko_ime)
     response.content_type = 'application/json'
     return {"obstaja": obstaja}
 
@@ -199,13 +199,13 @@ def uredi_uporabnike():
 @get("/admin/uredi_uporabnike/<uporabnisko_ime>")
 def uredi_uporabnika(uporabnisko_ime):
     preveri_dostop("admin")
-    uporabnik = pridobi_uporabnika(uporabnisko_ime)
+    uporabnik = Uporabnik.pridobi_uporabnika(uporabnisko_ime)
     return template("uredi_uporabnika.html", uporabnik=uporabnik, pridobi_domaca_stran=pridobi_url_domaca_stran)
 
 @post("/admin/uredi_uporabnike/<uporabnisko_ime>")
 def uredi_uporabnika_post(uporabnisko_ime):
     preveri_dostop("admin")
-    id_uporabnika = pridobi_id_uporabnika(uporabnisko_ime)
+    id_uporabnika = Uporabnik.pridobi_id_uporabnika(uporabnisko_ime)
     novo_uporabnisko_ime = request.forms.get("geslo")
     novo_geslo = request.forms.get("geslo")
     nova_vrsta = int(request.forms.get("vrsta"))
@@ -213,7 +213,7 @@ def uredi_uporabnika_post(uporabnisko_ime):
     novi_priimek = request.forms.get("priimek")
     nova_eposta = request.forms.get("eposta")
     nova_cena = request.forms.get("cena") if nova_vrsta == 1 else None
-    posodobi_uporabnika(id_uporabnika, novo_uporabnisko_ime, novo_geslo, nova_vrsta, novo_ime, novi_priimek, nova_eposta, nova_cena)
+    Uporabnik.posodobi_uporabnika(id_uporabnika, novo_uporabnisko_ime, novo_geslo, nova_vrsta, novo_ime, novi_priimek, nova_eposta, nova_cena)
     redirect("/admin/uredi_uporabnike")
     
 @get("/ucitelji/<uporabnisko_ime>")
