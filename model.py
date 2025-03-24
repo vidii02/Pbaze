@@ -8,7 +8,7 @@ if not os.path.exists("baza.db"):
         with sqlite3.connect("baza.db") as povezava:
             baza.pripravi_bazo(povezava)
             povezava.execute("PRAGMA foreign_keys = ON")
-            ucitelji, ucenci, uporabniki, predmeti, instrukcije, uciteljiPredmeti = baza.pripravi_tabele(povezava)
+            ucitelji, ucitelji, uporabniki, predmeti, instrukcije, uciteljiPredmeti = baza.pripravi_tabele(povezava)
             povezava.commit()
     except sqlite3.DatabaseError as e:
         print(f"Napaka pri ustvarjanju baze: {e}")
@@ -419,7 +419,6 @@ class Uporabnik:
             })
         return results
     
-    @staticmethod
     @staticmethod
     def preveri_uporabnika(uporabnisko_ime, geslo):
         cursor = povezava.cursor()

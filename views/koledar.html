@@ -259,12 +259,12 @@
                         % zacetni_datum = datum_instrukcije
                     % end
                     <div class="instruction status-{{ instrukcija.status.lower() }}">
-                        <div>{{ instrukcija.ime_predmeta }}</div>
-                        <div>{{ instrukcija.ucenec }}</div>
+                        <div>Učitelj: {{ instrukcija.ucitelj }}</div>
+                        <div>Učenec: {{ instrukcija.ucenec }}</div>
+                        <div>Predmet: {{ instrukcija.ime_predmeta }}</div>
                         % zacetni_cas = datetime.strftime(datetime.strptime(instrukcija.datum, "%Y-%m-%d %H:%M"), "%H:%M")
                         % koncni_cas = datetime.strftime(datetime.strptime(zacetni_cas, "%H:%M") + timedelta(minutes = instrukcija.trajanje), "%H:%M")
-                        <div> Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
-                        <div>{{ instrukcija.ucitelj }}</div>
+                        <div>Od {{ zacetni_cas }} do {{ koncni_cas }}</div>
                         <div>Ocena: {{ instrukcija.ocena if instrukcija.ocena else 'Ni ocenjena' }}</div>
                         <div>Mnenje: {{ instrukcija.mnenje if instrukcija.mnenje else 'Ni mnenja' }}</div>
                         % if vrsta == "učitelj":
