@@ -196,7 +196,7 @@ def uciteljevi_ucenci(id_ucitelja, page, limit, st_ucencev):
     ucenci: list = Ucitelj.ucenci_ucitelja(id_ucitelja, limit=limit, offset=offset)
     
     print("-" * 100)
-
+    
     elements = ["", "Ime učenca: ", "Priimek učenca: ", "E-pošta: "]
     spacing = [6, 45, 45, 45]
     dolzina = 55
@@ -206,7 +206,7 @@ def uciteljevi_ucenci(id_ucitelja, page, limit, st_ucencev):
     padding_left = "║ "
     padding_right = "   ║"
     row = "║" + " " * (velika_dolzina + 2) + "║"
-    header = f"Vsi učenci od {ucitelj} (Stran {page} od {skupno_strani})"
+    header = f"Vsi učenci od {ucitelj} (Stran {page if st_ucencev > 0 else 0} od {skupno_strani})"
     header_padding = " " * ((velika_dolzina - 4 - len(header)) // 2)
     
     print("╔" + "═" * (velika_dolzina + 2) + "╗")
@@ -276,7 +276,7 @@ def uciteljeve_instrukcije(id_ucitelja, page, limit, st_instrukcij):
         
         elements[0] = f"#{i+1}"
         
-        mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < 72 else instrukcija.mnenje[:70] + "..." 
+        mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < 70 else instrukcija.mnenje[:68] + "..." 
         data = ["", ucenec[0], ucenec[1], ucenec[2], instrukcija.ime_predmeta, instrukcija.datum, instrukcija.trajanje, status[instrukcija.status], ocena[instrukcija.ocena], mnenje]
         
         formated_data = [elements[i] + str(data[i]) + " " * (spacing[i] - len(elements[i]) - len(str(data[i]))) for i in range(len(data))]
@@ -504,28 +504,50 @@ def meni_prijava():
 def meni_registracija():
     while True:
         uporabnisko_ime = input("Vnesi uporabniško ime: ")
+        if not uporabnisko_ime:
+            print("Uporabniško ime ne sme biti prazno! Poskusi znova.")
+            continue
         if not Uporabnik.preveri_uporabnisko_ime(uporabnisko_ime):
             break
         print("Uporabniško ime že obstaja! Poskusi znova.")
-    geslo = getpass.getpass("Vnesi geslo: ")
+    while True:
+        geslo = getpass.getpass("Vnesi geslo: ")
+        if geslo:
+            break
+        print("Geslo ne sme biti prazno! Poskusi znova.")
     while True:
         izbira = input("Izberi vrsto uporabnika:\n1) Učitelj\n2) Učenec\n")
         if izbira in ["1", "2"]:
             break
         print("Napačna izbira! Poskusi znova.")
-    vrsta = "učitelj" if izbira == "1" else "učenec"
-    ime = input("Vnesi ime: ")
-    priimek = input("Vnesi priimek: ")
-    email = input("Vnesi e-pošto: ")
-    if vrsta == "učitelj":
+    vrsta = 1 if izbira == "1" else 0
+    while True:
+        ime = input("Vnesi ime: ")
+        if ime:
+            break
+        print("Ime ne sme biti prazno! Poskusi znova.")
+    while True:
+        priimek = input("Vnesi priimek: ")
+        if priimek:
+            break
+        print("Priimek ne sme biti prazen! Poskusi znova.")
+    while True:
+        email = input("Vnesi e-pošto: ")
+        if "@" in email and "." in email:
+            break
+        print("E-pošta ni pravilno oblikovana! Poskusi znova.")
+    cena = None
+    if vrsta == 1:
         while True:
-            cena = float(input("Vnesi ceno inštrukcij: "))
+            try:
+                cena = float(input("Vnesi ceno inštrukcij: "))
+            except ValueError:
+                print("Cena mora biti število!")
+                continue
             if 0 < cena < 50:
                 break
             print("Cena mora biti med 0 in 50!")
-        Uporabnik.registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, email, cena) 
-    else:
-        Uporabnik.registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, email)
+    Uporabnik.registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, email, cena)
     
     print("Uspešno si se registriral!")
     time.sleep(1)    
