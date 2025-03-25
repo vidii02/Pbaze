@@ -40,22 +40,23 @@ Za seminarsko nalogo bova naredila sistem za inštrukcije. Glavne entitete bodo 
 
 Sistem omogoča upravljanje inštrukcij med učitelji in učenci. Učitelji lahko določijo ceno na uro za svoje inštrukcije, učenci pa lahko rezervirajo inštrukcije pri različnih učiteljih. Sistem omogoča tudi spremljanje statusa inštrukcij (rezervirano, opravljeno, preklicano) ter upravljanje predmetov, ki jih učitelji poučujejo.
 
-## Tehnologije
-
-- **Python**: Programski jezik za razvoj aplikacije
-- **SQLite**: Relacijska baza podatkov za shranjevanje podatkov
-- **Bottle**: Mikro spletni okvir za razvoj spletnih aplikacij
-- **HTML/CSS**: Za oblikovanje uporabniškega vmesnika
-
 ## Namestitev in zagon
 
 1. Klonirajte repozitorij:
     ```bash
     git clone <URL_repozitorija>
     ```
-2. Zaženite aplikacijo:
+2. Pred zagonom projekta je potrebno namestiti vse potrebne knjižnice. To lahko storite z naslednjim ukazom:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3. Zagon spletnega vmesnika:
     ```bash
     python spletni_vmesnik.py
+    ```
+    Zagon tekstovnega vmesnika:
+    ```bash
+    python tekstovni_vmesnik.py
     ```
 
 ## Avtorja
