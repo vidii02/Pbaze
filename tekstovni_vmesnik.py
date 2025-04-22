@@ -276,8 +276,20 @@ def uciteljeve_instrukcije(id_ucitelja, page, limit, st_instrukcij):
         
         elements[0] = f"#{i+1}"
         
-        mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < 70 else instrukcija.mnenje[:68] + "..." 
-        data = ["", ucenec[0], ucenec[1], ucenec[2], instrukcija.ime_predmeta, instrukcija.datum, instrukcija.trajanje, status[instrukcija.status], ocena[instrukcija.ocena], mnenje]
+        mnenje = "Ni mnenja"
+        if instrukcija.mnenje:
+            mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < 70 else instrukcija.mnenje[:68] + "..." 
+        data = [
+            "",
+            ucenec[0],
+            ucenec[1],
+            ucenec[2],
+            instrukcija.ime_predmeta,
+            instrukcija.datum,
+            instrukcija.trajanje,
+            status[instrukcija.status],
+            ocena[instrukcija.ocena],
+            mnenje]
         
         formated_data = [elements[i] + str(data[i]) + " " * (spacing[i] - len(elements[i]) - len(str(data[i]))) for i in range(len(data))]
 
@@ -403,8 +415,18 @@ def koledar(uporabnik, current_week_start: datetime, current_week_end: datetime,
             print(f"{big_padding_left}{middle_padding_left}{padding}{current_date}{padding}{' ' if len(current_date) % 2 == 1 else ''}{middle_padding_right}{big_padding_right}")
             print(middle_row)
         
-        mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < dolzina - 15 else instrukcija.mnenje[:dolzina - 19] + "..." 
-        data = [Ucitelj.ime_ucitelja(instrukcija.id_ucitelja), Ucenec.ime_ucenca(instrukcija.id_ucenca), instrukcija.ime_predmeta, f'Od {instrukcija.datum.split(" ")[1]} do {(datetime.strptime(instrukcija.datum.split(" ")[1], "%H:%M") + timedelta(minutes=int(instrukcija.trajanje))).strftime("%H:%M")}', status[instrukcija.status], ocena[instrukcija.ocena], mnenje]
+        mnenje = "Ni mnenja"
+        if instrukcija.mnenje:
+            mnenje = instrukcija.mnenje if len(instrukcija.mnenje) < dolzina - 15 else instrukcija.mnenje[:dolzina - 19] + "..." 
+        data = [
+            Ucitelj.ime_ucitelja(instrukcija.id_ucitelja),
+            Ucenec.ime_ucenca(instrukcija.id_ucenca),
+            instrukcija.ime_predmeta,
+            f'Od {instrukcija.datum.split(" ")[1]} do {(datetime.strptime(instrukcija.datum.split(" ")[1],
+            "%H:%M") + timedelta(minutes=int(instrukcija.trajanje))).strftime("%H:%M")}',
+            status[instrukcija.status],
+            ocena[instrukcija.ocena],
+            mnenje]
         
         formated_data = [elements[i] + str(data[i]) + " " * (spacing[i] - len(elements[i]) - len(str(data[i]))) for i in range(len(data))]
         
@@ -546,7 +568,7 @@ def meni_registracija():
                 continue
             if 0 < cena < 50:
                 break
-            print("Cena mora biti med 0 in 50!")
+            print("Cena mora biti med 0 in 50 (vključno)!")    
     Uporabnik.registracija_uporabnika(uporabnisko_ime, geslo, vrsta, ime, priimek, email, cena)
     
     print("Uspešno si se registriral!")
@@ -613,6 +635,8 @@ def glavni_meni_admin(uporabnik):
             meni_vsi_ucitelji(uporabnik)
         case "2":
             meni_vsi_ucenci(uporabnik)
+        case "3":
+            odjava()
         case "0":
             konec()
         case _: 
